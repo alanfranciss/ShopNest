@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | ShopNest</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+        :root {
+            --primary: #819A91;
+            --primary-hover: #668077;
+            --bg-body: #F3F4F6;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        .content-wrapper {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 2rem 2rem;
+        }
+
+        .auth-container {
+            display: flex;
+            flex-direction: row-reverse;
+            width: 100%;
+            max-width: 1200px;
+            background: #F8F3D9;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin: 0 2rem;
+        }
+
+        .auth-image {
+            flex: 1;
+            background: url('https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=800') center/cover;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 4rem;
+            color: white;
+        }
+
+        .auth-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(129, 154, 145, 0.9), rgba(44, 62, 53, 0.4));
+        }
+
+        .image-content {
+            position: relative;
+            z-index: 10;
+        }
+
+        .image-content h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .image-content p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .auth-form-wrap {
+            flex: 1.2;
+            padding: 3rem 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-width: 650px;
+        }
+
+        .brand-logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .auth-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.9rem 1.25rem;
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #F8F3D9;
+            box-shadow: 0 0 0 4px rgba(129, 154, 145, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: var(--text-main);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            box-shadow: 0 10px 20px rgba(17, 24, 39, 0.2);
+        }
+
+        .btn-submit:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(129, 154, 145, 0.3);
+        }
+
+        .auth-footer {
+            margin-top: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .auth-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 900px) {
+            .auth-image {
+                display: none;
+            }
+
+            .auth-form-wrap {
+                padding: 3rem 2rem;
+                max-width: 100%;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .form-row .form-group {
+                margin-bottom: 1.25rem;
+            }
+
+            .auth-container {
+                margin: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    {% include 'navbar.html' %}
+
+    <div class="content-wrapper">
+        <div class="auth-container">
+        <div class="auth-image">
+            <div class="image-content">
+                <h2>Join the ShopNest.</h2>
+                <p>Create an account to unlock exclusive member perks, early access to new collections, and faster
+                    checkout experiences.</p>
+            </div>
+        </div>
+
+        <div class="auth-form-wrap">
+            <a href="{% url 'index' %}" class="brand-logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                </svg>
+                ShopNest
+            </a>
+
+            <div class="auth-header">
+                <h1>Create Account</h1>
+                <p>Fill in your details to start your  premium journey.</p>
+            </div>
+
+            {% if messages %}
+            <div class="messages" style="margin-bottom: 1rem; color: #dc2626; font-size: 0.9rem; font-weight: 500; background: #fee2e2; padding: 0.75rem; border-radius: 8px;">
+                {% for message in messages %}
+                <p {% if message.tags == 'success' %}style="color: #059669;"{% endif %}>{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form action="{% url 'signup' %}" method="POST">
+                {% csrf_token %}
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="first_name">First Name</label>
+                        <input type="text" id="first_name" name="first_name" class="form-input"
+                            >
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="last_name">Last Name</label>
+                        <input type="text" id="last_name" name="last_name" class="form-input"
+                            >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-input" 
+                        >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-input"
+                        placeholder="Create a strong password" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="confirm_password">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" class="form-input"
+                        placeholder="Repeat your password" required>
+                </div>
+
+                <button type="submit" class="btn-submit">Sign Up</button>
+            </form>
+
+            <div class="auth-footer">
+                Already have an account? <a href="{% url 'login' %}">Log in here</a>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Include the Footer -->
+    {% include 'footer.html' %}
+</body>
+
+</html>

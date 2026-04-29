@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopNest | ShopNest by Category</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+        :root {
+            --primary: #819A91;
+            --primary-light: #A7C1A8;
+            --secondary: #2C3E35;
+            --bg-body: #EEEFE0;
+            --surface: #F8F3D9;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --border: #D1D8BE;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .content-wrapper {
+            padding-top: 80px;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--secondary) 0%, #1E1B4B 100%);
+            color: white;
+            padding: 6rem 2rem 5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 30%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(129, 154, 145, 0.2) 0%, transparent 60%);
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
+
+        .page-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+            position: relative;
+            z-index: 10;
+        }
+
+        .page-subtitle {
+            font-size: 1.15rem;
+            color: #CBD5E1;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+            line-height: .7;
+        }
+
+        .categories-section {
+            padding: 5rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .category-card {
+            background: #F8F3D9;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border);
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+            display: block;
+            height: 380px;
+        }
+
+        .category-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(44, 62, 53, 0.08);
+            border-color: var(--primary-light);
+        }
+
+        .category-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.7s ease;
+        }
+
+        .category-card:hover .category-image {
+            transform: scale(1.08);
+        }
+
+        .category-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(44, 62, 53, 0.85) 0%, rgba(44, 62, 53, 0.2) 60%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2.5rem;
+            transition: background 0.4s ease;
+        }
+
+        .category-card:hover .category-overlay {
+            background: linear-gradient(to top, rgba(129, 154, 145, 0.9) 0%, rgba(44, 62, 53, 0.3) 60%, transparent 100%);
+        }
+
+        .category-name {
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            margin-bottom: 0.5rem;
+            transform: translateY(10px);
+            transition: transform 0.4s ease;
+        }
+
+        .category-card:hover .category-name {
+            transform: translateY(0);
+        }
+
+        .category-link-text {
+            color: rgba(248, 243, 217, 0.8);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.8;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+        }
+
+        .category-card:hover .category-link-text {
+            opacity: 1;
+            transform: translateY(0);
+            color: white;
+        }
+
+        .category-link-text svg {
+            transition: transform 0.3s ease;
+        }
+
+        .category-card:hover .category-link-text svg {
+            transform: translateX(5px);
+        }
+        
+        /* Fallback Gradients for categories without images */
+        .gradient-1 { background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 99%, #FECFEF 100%); }
+        .gradient-2 { background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%); }
+        .gradient-3 { background: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%); }
+        .gradient-4 { background: linear-gradient(120deg, #f093fb 0%, #f5576c 100%); }
+        .gradient-5 { background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); }
+        .gradient-6 { background: linear-gradient(to right, #fa709a 0%, #fee140 100%); }
+
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s ease;
+        }
+
+        .category-card:hover .image-placeholder {
+            transform: scale(1.08);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem;
+            background: #F8F3D9;
+            border-radius: 20px;
+            border: 1px dashed var(--border);
+            grid-column: 1 / -1;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+
+    {% include 'navbar.html' %}
+
+    <div class="content-wrapper">
+        <header class="page-header">
+            <h1 class="page-title">ShopNest by Category</h1>
+            <p class="page-subtitle">Explore our expertly curated collections and discover pieces that define your personal style.</p>
+        </header>
+
+        <section class="categories-section">
+            <div class="category-grid">
+                {% if categories %}
+                    {% for category in categories %}
+                    <!-- Link to products view filtered by category if available, otherwise just to products -->
+                    <a href="{% url 'products' %}?category={{ category.id }}" class="category-card">
+                        
+                        {% with first_product=category.products.first %}
+                            {% if first_product and first_product.image %}
+                                <img src="{{ first_product.image.url }}" alt="{{ category.name }}" class="category-image">
+                            {% else %}
+                                <!-- Assign a rotation of gradients based on loop counter for fallback since Category doesn't have an image field -->
+                                <div class="image-placeholder
+                                    {% if forloop.counter0|add:'0'|divisibleby:6 %}gradient-1
+                                    {% elif forloop.counter0|add:'5'|divisibleby:6 %}gradient-2
+                                    {% elif forloop.counter0|add:'4'|divisibleby:6 %}gradient-3
+                                    {% elif forloop.counter0|add:'3'|divisibleby:6 %}gradient-4
+                                    {% elif forloop.counter0|add:'2'|divisibleby:6 %}gradient-5
+                                    {% else %}gradient-6{% endif %}">
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                        
+                        <div class="category-overlay">
+                            <h2 class="category-name">{{ category.name }}</h2>
+                            <div class="category-link-text">
+                                Explore Collection 
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <!-- Hardcoded Demo Categories if no db categories are present -->
+                    <a href="{% url 'products' %}" class="category-card">
+                        <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&q=80&w=800" alt="Winter Collection" class="category-image">
+                        <div class="category-overlay">
+                            <h2 class="category-name">Winter Collection</h2>
+                            <div class="category-link-text">
+                                Explore Collection 
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="{% url 'products' %}" class="category-card">
+                        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=800" alt="Summer Essentials" class="category-image">
+                        <div class="category-overlay">
+                            <h2 class="category-name">Summer Essentials</h2>
+                            <div class="category-link-text">
+                                Explore Collection 
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="{% url 'products' %}" class="category-card">
+                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&q=80&w=800" alt="Women's Fashion" class="category-image">
+                        <div class="category-overlay">
+                            <h2 class="category-name">Women's Fashion</h2>
+                            <div class="category-link-text">
+                                Explore Collection 
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="{% url 'products' %}" class="category-card">
+                        <img src="https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&q=80&w=800" alt="Men's Collection" class="category-image">
+                        <div class="category-overlay">
+                            <h2 class="category-name">Men's Collection</h2>
+                            <div class="category-link-text">
+                                Explore Collection 
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="{% url 'products' %}" class="category-card">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800" alt="Footwear" class="category-image">
+                        <div class="category-overlay">
+                            <h2 class="category-name">Footwear</h2>
+                            <div class="category-link-text">
+                                Explore Collection 
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="{% url 'products' %}" class="category-card">
+                        <img src="media/Gemini_Generated_Image_s3hwpss3hwpss3hw.png" alt="Accessories" class="category-image">
+                        <div class="category-overlay">
+                            <h2 class="category-name">Accessories</h2>
+                            <div class="category-link-text">
+                                Explore Collection 
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+
+    <!-- Include the Footer -->
+    {% include 'footer.html' %}
+</body>
+</html>

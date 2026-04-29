@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Success | ShopNest</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+        :root {
+            --primary: #819A91;
+            --primary-light: #A7C1A8;
+            --secondary: #2C3E35;
+            --bg-body: #EEEFE0;
+            --surface: #F8F3D9;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --border: #D1D8BE;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .content-wrapper {
+            padding-top: 100px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-card {
+            background: white;
+            padding: 4rem 3rem;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            margin-bottom: 5rem;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(129, 154, 145, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            color: var(--primary);
+        }
+
+        .success-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .success-text {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .order-details {
+            background: var(--bg-body);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .detail-row:last-child {
+            margin-bottom: 0;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--secondary);
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #668077;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(129, 154, 145, 0.2);
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    <div class="content-wrapper">
+        <div class="success-card">
+            <div class="success-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h1 class="success-title">Order Confirmed!</h1>
+            <p class="success-text">Thank you, {{ order.first_name }}! Your premium aesthetics are on their way. We've sent a confirmation email to {{ order.email }}.</p>
+            
+            <div class="order-details">
+                <div class="detail-row">
+                    <span style="color:var(--text-muted)">Order Number</span>
+                    <span style="font-weight:500; color:var(--text-main)">#{{ order.id }}9928</span>
+                </div>
+                <div class="detail-row">
+                    <span style="color:var(--text-muted)">Payment Method</span>
+                    <span style="font-weight:500; color:var(--text-main)">{{ order.payment_method }}</span>
+                </div>
+                <div class="detail-row">
+                    <span style="color:var(--text-muted)">Shipping Address</span>
+                    <span style="font-weight:500; color:var(--text-main)">{{ order.city }}, {{ order.zip_code }}</span>
+                </div>
+                <div class="detail-row">
+                    <span>Total Amount Paid</span>
+                    <span>${{ order.total_amount }}</span>
+                </div>
+            </div>
+
+            <a href="{% url 'products' %}" class="btn">Continue Shopping</a>
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+</body>
+</html>

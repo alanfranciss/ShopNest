@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account | ShopNest</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+        :root {
+            --primary: #819A91;
+            --primary-hover: #668077;
+            --bg-body: #EEEFE0;
+            --surface: #F8F3D9;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --border: #D1D8BE;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Using a dummy navbar for preview context since we'll assume it's included */
+        .page-header {
+            background: linear-gradient(135deg, #2C3E35 0%, #1E1B4B 100%);
+            padding: 8rem 2rem 4rem;
+            color: white;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+
+        .account-container {
+            max-width: 1200px;
+            margin: -3rem auto 4rem;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Sidebar Menu */
+        .account-sidebar {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+            height: fit-content;
+        }
+
+        .user-info-mini {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #EC4899);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .user-details h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .user-details p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.85rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link:hover {
+            background: #F3F4F6;
+            color: var(--text-main);
+        }
+
+        .nav-link.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(129, 154, 145, 0.25);
+        }
+
+        .nav-link.logout {
+            color: #EF4444;
+            margin-top: 1rem;
+        }
+
+        .nav-link.logout:hover {
+            background: #FEF2F2;
+        }
+
+        /* Main Content */
+        .account-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .card-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .btn-edit {
+            background: #F8F3D9;
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-edit:hover {
+            background: #F9FAFB;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Profile Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .form-value {
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+            background: #F9FAFB;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-main);
+        }
+
+        /* Recent Orders */
+        .order-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .order-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .order-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 24px rgba(129, 154, 145, 0.1);
+        }
+
+        .order-card-header {
+            background: #F9FAFB;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-meta-info {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .meta-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .meta-block-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-block-value {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .order-card-body {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-items-preview {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .image-stack {
+            display: flex;
+            align-items: center;
+        }
+
+        .image-stack img {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 3px solid #ffffff;
+            background: #EEF2FF;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-right: -20px;
+            position: relative;
+        }
+
+        .image-stack .more-indicator {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            background: #F3F4F6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            border: 3px solid #ffffff;
+            position: relative;
+            z-index: 0;
+            color: var(--text-muted);
+            margin-left: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .order-summary-text h4 {
+            font-size: 1.15rem;
+            margin-bottom: 0.35rem;
+            color: var(--text-main);
+        }
+
+        .order-summary-text p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .order-card-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            align-items: flex-end;
+        }
+
+        .btn-view-order {
+            padding: 0.6rem 1.2rem;
+            background: var(--surface);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .btn-view-order:hover {
+            background: #ffffff;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-cancel-order {
+            background: none;
+            border: none;
+            color: #EF4444;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 0;
+            text-decoration: underline;
+        }
+
+        .btn-cancel-order:hover {
+            color: #B91C1C;
+        }
+
+        .order-status {
+            padding: 0.35rem 0.85rem;
+            border-radius: 99px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: #ECFDF5;
+            color: #10B981;
+        }
+
+        @media (max-width: 900px) {
+            .account-container {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .order-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .order-meta {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    {% include 'navbar.html' %}
+
+    <div class="page-header">
+        <h1>My Account</h1>
+        <p>Manage your profile, track orders, and view your preferences.</p>
+    </div>
+
+    <div class="account-container">
+
+        <!-- Sidebar -->
+        <aside class="account-sidebar">
+            <div class="user-info-mini">
+                <div class="avatar">{{ request.user.first_name|first|default:'?'|upper }}{{ request.user.last_name|first|default:''|upper }}</div>
+                <div class="user-details">
+                    <h3>{{ request.user.first_name|default:request.user.username }} {{ request.user.last_name }}</h3>
+                    <p>Member since {{ request.user.date_joined|date:"Y" }}</p>
+                </div>
+            </div>
+
+            <nav>
+                <a href="{% url 'user' %}" class="nav-link active">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Profile Overview
+                </a>
+                <a href="#orders" class="nav-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    My Orders
+                </a>
+                <a href="{% url 'wishlist_detail' %}" class="nav-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                        </path>
+                    </svg>
+                    Wishlist
+                </a>
+                <a href="{% url 'user' %}" class="nav-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                        </path>
+                    </svg>
+                    Settings
+                </a>
+
+                {% if request.user.profile.is_seller %}
+                <a href="{% url 'seller_dashboard' %}" class="nav-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    Seller Hub
+                </a>
+                {% else %}
+                <a href="{% url 'seller_registration' %}" class="nav-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5c-1.1 0-2 .9-2 2v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <line x1="20" y1="8" x2="20" y2="14"></line>
+                        <line x1="23" y1="11" x2="17" y2="11"></line>
+                    </svg>
+                    Become a Seller
+                </a>
+                {% endif %}
+
+                <a href="{% url 'logout' %}" class="nav-link logout">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Log Out
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="account-content">
+
+            <!-- Profile Info -->
+            <form action="{% url 'user' %}" method="post" class="card" style="margin-bottom: 2rem;">
+                {% csrf_token %}
+                <div class="card-header">
+                    <h2>Personal Information</h2>
+                    <button type="submit" class="btn-edit" style="background:var(--primary); color:white; border:none;">Save Changes</button>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        <input type="text" name="first_name" class="form-value" value="{{ request.user.first_name }}" style="width:100%;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" name="last_name" class="form-value" value="{{ request.user.last_name }}" style="width:100%;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address (Read Only)</label>
+                        <div class="form-value" style="background:#EEF2FF; opacity:0.8;">{{ request.user.email }}</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="text" name="phone" class="form-value" value="{{ profile.phone|default:'' }}" style="width:100%;">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label class="form-label">Delivery Address</label>
+                        <input type="text" name="address" class="form-value" value="{{ profile.address|default:'' }}" placeholder="123 Signature Ave" style="width:100%;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">City</label>
+                        <input type="text" name="city" class="form-value" value="{{ profile.city|default:'' }}" placeholder="New York" style="width:100%;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ZIP / Postal Code</label>
+                        <input type="text" name="zip_code" class="form-value" value="{{ profile.zip_code|default:'' }}" placeholder="10001" style="width:100%;">
+                    </div>
+                </div>
+            </form>
+
+            <!-- Recent Orders -->
+            <div class="card" id="orders">
+                <div class="card-header">
+                    <h2>Recent Orders</h2>
+                    <a href="#orders" style="color:var(--primary); text-decoration:none; font-weight:500;">View All</a>
+                </div>
+
+                <div class="order-list">
+                    {% if orders %}
+                        {% for order in orders %}
+                        <div class="order-card">
+                            <div class="order-card-header">
+                                <div class="order-meta-info">
+                                    <div class="meta-block">
+                                        <span class="meta-block-label">Order Placed</span>
+                                        <span class="meta-block-value">{{ order.created_at|date:"M d, Y" }}</span>
+                                    </div>
+                                    <div class="meta-block">
+                                        <span class="meta-block-label">Total</span>
+                                        <span class="meta-block-value">${{ order.total_amount }}</span>
+                                    </div>
+                                    <div class="meta-block">
+                                        <span class="meta-block-label">Order #</span>
+                                        <span class="meta-block-value">ORD-{{ order.id }}9928</span>
+                                    </div>
+                                </div>
+                                <div class="order-status-badge">
+                                    <span class="order-status" style="{% if order.status == 'Pending' %}background:#FEF3C7; color:#D97706;{% elif order.status == 'Processing' %}background:#E0F2FE; color:#0284C7;{% elif order.status == 'Shipped' %}background:#F3E8FF; color:#7E22CE;{% elif order.status == 'Delivered' %}background:#ECFDF5; color:#10B981;{% elif order.status == 'Cancelled' %}background:#FEE2E2; color:#EF4444;{% else %}background:#ECFDF5; color:#10B981;{% endif %}">{{ order.status }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="order-card-body">
+                                <div class="order-items-preview">
+                                    <div class="image-stack">
+                                        {% for item in order.items.all|slice:":3" %}
+                                            {% if item.product.image %}
+                                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="z-index: {{ forloop.revcounter }};">
+                                            {% else %}
+                                                <div style="width: 64px; height: 64px; border-radius: 12px; border: 3px solid white; margin-right: -20px; position: relative; z-index: {{ forloop.revcounter }}; background: #EEF2FF; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.05);">Img</div>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if order.items.count > 3 %}
+                                            <div class="more-indicator">+{{ order.items.count|add:"-3" }}</div>
+                                        {% else %}
+                                            <div style="width: 20px;"></div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="order-summary-text">
+                                        <h4>
+                                            {% for item in order.items.all|slice:":2" %}
+                                                {{ item.product.name }}{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                            {% if order.items.count > 2 %}
+                                                <span style="color: var(--text-muted); font-size: 0.95rem; font-weight: normal;">+{{ order.items.count|add:"-2" }} more item(s)</span>
+                                            {% endif %}
+                                        </h4>
+                                        <p>
+                                            {% for item in order.items.all %}
+                                                {% if item.tracking_number or item.tracking_status %}
+                                                    <span>
+                                                        {% if item.tracking_number %}Tracking: <strong style="color:var(--text-main);">{{ item.tracking_number }}</strong>{% endif %}
+                                                        {% if item.tracking_status %}{% if item.tracking_number %} | {% endif %}<span style="color: var(--primary); font-weight: 500;">{{ item.tracking_status }}</span>{% endif %}
+                                                    </span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="order-card-actions">
+                                    <a href="{% url 'order_detail' order.id %}" class="btn-view-order">View Order Details</a>
+                                    
+                                    {% if order.status == 'Pending' or order.status == 'Processing' %}
+                                    <form action="{% url 'cancel_order' order.id %}" method="post" onsubmit="return confirm('Are you sure you want to cancel this entire order?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn-cancel-order">Cancel Order</button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p style="text-align:center; padding: 2rem 0; color:var(--text-muted);">You have no recent orders.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Include the Footer -->
+    {% include 'footer.html' %}
+</body>
+
+</html>

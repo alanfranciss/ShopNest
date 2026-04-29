@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | ShopNest</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+        :root {
+            --primary: #819A91;
+            --primary-light: #A7C1A8;
+            --secondary: #2C3E35;
+            --bg-body: #EEEFE0;
+            --surface: #F8F3D9;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --border: #D1D8BE;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .content-wrapper {
+            padding-top: 100px;
+            flex-grow: 1;
+        }
+
+        .checkout-container {
+            max-width: 1200px;
+            margin: 2rem auto 5rem;
+            padding: 0 2rem;
+        }
+
+        .checkout-title {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 3rem;
+        }
+
+        .checkout-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid var(--border);
+        }
+
+        .checkout-section h2 {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-body);
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(129, 154, 145, 0.1);
+            background: white;
+        }
+
+        .payment-methods {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-option {
+            flex: 1;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .payment-option input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .payment-option span {
+            display: block;
+            text-align: center;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.3s;
+            background: var(--bg-body);
+        }
+
+        .payment-option input:checked ~ span {
+            border-color: var(--primary);
+            background: rgba(129, 154, 145, 0.1);
+            color: var(--primary);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            padding: 1.25rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Outfit';
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            background: #668077;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(129, 154, 145, 0.2);
+        }
+
+        @media (max-width: 968px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    <div class="content-wrapper">
+        <div class="checkout-container">
+            <h1 class="checkout-title">Secure Checkout</h1>
+            
+            <form action="{% url 'checkout' %}" method="post">
+                {% csrf_token %}
+                <div class="checkout-grid">
+                    <!-- Shipping Info -->
+                    <div class="checkout-section">
+                        <h2>Shipping Information</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" name="first_name" required {% if request.user.is_authenticated %}value="{{ request.user.first_name }}"{% endif %}>
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" name="last_name" required {% if request.user.is_authenticated %}value="{{ request.user.last_name }}"{% endif %}>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" name="email" required {% if request.user.is_authenticated %}value="{{ request.user.email }}"{% endif %}>
+                        </div>
+                        <div class="form-group">
+                            <label>Street Address</label>
+                            <input type="text" name="address" required placeholder="123 Signature Ave">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" name="city" required placeholder="New York">
+                            </div>
+                            <div class="form-group">
+                                <label>ZIP / Postal Code</label>
+                                <input type="text" name="zip_code" required placeholder="10001">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Info -->
+                    <div class="checkout-section">
+                        <h2>Payment Details</h2>
+                        
+                        <div class="payment-methods">
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="Credit Card" checked 
+                                    onchange="document.getElementById('cc-form').style.display='block'; toggleCCRequired(true)">
+                                <span>Credit Card</span>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="Cash on Delivery" 
+                                    onchange="document.getElementById('cc-form').style.display='none'; toggleCCRequired(false)">
+                                <span>Cash on Delivery</span>
+                            </label>
+                        </div>
+
+                        <div id="cc-form" style="margin-top: 1.5rem; background: var(--surface); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border);">
+                            <div class="form-group">
+                                <label>Card Number</label>
+                                <input type="text" name="cc_number" class="cc-input" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                                <small style="display:block; margin-top:5px; color:var(--text-muted); font-size:0.8rem;">Note: This is a demo environment. Any number works.</small>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group" style="margin-bottom:0;"><label>Expiry Date</label><input type="text" name="cc_expiry" class="cc-input" placeholder="MM/YY" maxlength="5" required></div>
+                                <div class="form-group" style="margin-bottom:0;"><label>CVC</label><input type="text" name="cc_cvc" class="cc-input" placeholder="123" maxlength="4" required></div>
+                            </div>
+                        </div>
+
+                        <script>
+                            function toggleCCRequired(isRequired) {
+                                const ccInputs = document.querySelectorAll('.cc-input');
+                                ccInputs.forEach(input => input.required = isRequired);
+                            }
+                        </script>
+
+                        <!-- Order Summary -->
+                        <div style="margin-top: 2rem; background: rgba(129, 154, 145, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px dashed var(--primary-light);">
+                            <h3 style="margin-bottom: 1rem; color: var(--secondary);">Order Summary</h3>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: var(--text-muted);">
+                                <span>Subtotal ({{ cart|length }} items):</span>
+                                <strong>${{ cart.get_total_price }}</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); color: var(--text-muted);">
+                                <span>Premium Shipping:</span>
+                                <strong>Free</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 1.5rem; font-weight: 700; color: var(--secondary); font-family: 'Outfit';">
+                                <span>Total:</span>
+                                <span>${{ cart.get_total_price }}</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit">
+                            Place Order (${{ cart.get_total_price }})
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+</body>
+</html>

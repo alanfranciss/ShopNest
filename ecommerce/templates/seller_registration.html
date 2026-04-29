@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Become a Seller | ShopNest</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+        :root {
+            --primary: #819A91;
+            --primary-hover: #668077;
+            --bg-body: #EEEFE0;
+            --surface: #F8F3D9;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --border: #D1D8BE;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .auth-container {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Abstract Background Decoration */
+        .decoration {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        .dec-1 {
+            width: 400px;
+            height: 400px;
+            background: #819A91;
+            top: -100px;
+            left: -100px;
+        }
+
+        .dec-2 {
+            width: 500px;
+            height: 500px;
+            background: #E8B4B8;
+            bottom: -200px;
+            right: -100px;
+        }
+
+        .auth-card {
+            background: rgba(248, 243, 217, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 500px;
+            padding: 3.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 10;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .auth-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            background: rgba(255, 255, 255, 0.6);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(129, 154, 145, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(129, 154, 145, 0.3);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .auth-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .alert-error {
+            background: #FEF2F2;
+            color: #EF4444;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            border: 1px solid #FECACA;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .auth-card {
+                padding: 2rem;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'navbar.html' %}
+
+    <div class="auth-container">
+        <div class="decoration dec-1"></div>
+        <div class="decoration dec-2"></div>
+
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>Become a Seller</h1>
+                <p>Register to start selling your products on ShopNest.</p>
+            </div>
+
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert-error" {% if message.tags == 'success' %}style="background:#ECFDF5; color:#10B981; border-color:#A7F3D0;"{% endif %}>
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            <form action="{% url 'seller_registration' %}" method="post">
+                {% csrf_token %}
+                
+                {% if request.user.is_authenticated %}
+                    {% if request.user.profile.is_seller_pending %}
+                    <div style="text-align:center; margin-bottom:1.5rem;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#F59E0B; margin-bottom:1rem;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <p style="color:var(--text-main); font-weight:600; font-size:1.1rem; margin-bottom:0.5rem;">Application Pending</p>
+                        <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.5;">Your request to become a seller is currently under review by our administration team. Check back later!</p>
+                    </div>
+                    {% else %}
+                    <div style="text-align:center; margin-bottom:1.5rem;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary); margin-bottom:1rem;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                            <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                            <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                        </svg>
+                        <p style="color:var(--text-main); font-weight:600; font-size:1.1rem; margin-bottom:0.5rem;">Hello, {{ request.user.first_name|default:request.user.username }}!</p>
+                        <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.5;">You are already registered. Click the button below to submit a request to upgrade your account to a Seller account.</p>
+                    </div>
+                    <button type="submit" class="btn-submit">Request Seller Account</button>
+                    {% endif %}
+
+                {% else %}
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="first_name">First Name</label>
+                        <input type="text" id="first_name" name="first_name" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="last_name">Last Name</label>
+                        <input type="text" id="last_name" name="last_name" class="form-input" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="confirm_password">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" class="form-input" required>
+                </div>
+
+                <button type="submit" class="btn-submit">Register as Seller</button>
+                <div class="auth-footer">
+                    Already have an account? <a href="{% url 'login' %}">Log In</a>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+</body>
+
+</html>

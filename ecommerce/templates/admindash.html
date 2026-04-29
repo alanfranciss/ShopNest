@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | ShopNest</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+        :root {
+            --primary: #819A91;
+            --primary-light: #EEF2FF;
+            --sidebar-bg: #2C3E35;
+            --sidebar-hover: #1E293B;
+            --sidebar-text: #94A3B8;
+            --sidebar-text-active: #FFFFFF;
+            --bg-body: #F8FAFC;
+            --surface: #F8F3D9;
+            --text-main: #2C3E35;
+            --text-muted: #64748B;
+            --border: #E2E8F0;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(248, 243, 217, 0.05);
+        }
+
+        .sidebar-nav {
+            padding: 1.5rem 1rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1rem 1.25rem;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background-color: var(--sidebar-hover);
+            color: var(--sidebar-text-active);
+        }
+
+        .nav-item.active {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(129, 154, 145, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 80px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: #F1F5F9;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            width: 350px;
+        }
+
+        .search-bar input {
+            border: none;
+            background: none;
+            outline: none;
+            margin-left: 10px;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            position: relative;
+        }
+
+        .btn-icon:hover {
+            color: var(--text-main);
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            font-size: 0.7rem;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .admin-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #A7C1A8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Dashboard Content */
+        .dashboard-container {
+            padding: 2.5rem;
+            flex: 1;
+        }
+
+        .page-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .page-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: var(--text-muted);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .icon-blue {
+            background: #EFF6FF;
+            color: #3B82F6;
+        }
+
+        .icon-green {
+            background: #ECFDF5;
+            color: var(--success);
+        }
+
+        .icon-purple {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .icon-orange {
+            background: #FFF7ED;
+            color: var(--warning);
+        }
+
+        .stat-content h3 {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stat-content .value {
+            font-size: 1.75rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-content .trend {
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .trend.up {
+            color: var(--success);
+        }
+
+        .trend.down {
+            color: var(--danger);
+        }
+
+        /* Tables and Charts Section */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .btn-ghost {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .btn-ghost:hover {
+            text-decoration: underline;
+        }
+
+        /* Table Styles */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 1rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status.completed {
+            background: #ECFDF5;
+            color: var(--success);
+        }
+
+        .status.pending {
+            background: #FFF7ED;
+            color: var(--warning);
+        }
+
+        .status.canceled {
+            background: #FEF2F2;
+            color: var(--danger);
+        }
+
+        .product-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .product-cell img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #F1F5F9;
+        }
+
+        /* Chart Placeholder (CSS only) */
+        .chart-placeholder {
+            flex: 1;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            padding-top: 20px;
+            height: 250px;
+        }
+
+        .bar {
+            flex: 1;
+            background: var(--primary-light);
+            border-radius: 6px 6px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .bar:hover {
+            background: var(--primary);
+        }
+
+        .bar::after {
+            content: attr(data-val);
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .bar:hover::after {
+            opacity: 1;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary);">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+            </svg>
+            ShopNest Admin
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Dashboard
+            </a>
+            <a href="#" class="nav-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+                Products
+            </a>
+            <a href="#" class="nav-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                Orders
+            </a>
+            <a href="#" class="nav-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Customers
+            </a>
+            <a href="#" class="nav-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                Analytics
+            </a>
+            <a href="{% url 'index' %}" class="nav-item" style="margin-top:2rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Go to Store
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="search-bar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" placeholder="Search orders, products, or users...">
+            </div>
+
+            <div class="topbar-actions">
+                <button class="btn-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="badge">3</span>
+                </button>
+                <div class="admin-profile">
+                    <div class="admin-avatar">AD</div>
+                    <span>Admin User</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-container">
+            <div class="page-header">
+                <h1>Dashboard Overview</h1>
+                <p>Track your sales, analyze performance, and manage orders.</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon icon-blue">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Total Revenue</h3>
+                        <div class="value">₹42,500.00</div>
+                        <div class="trend up">↑ 12.5% from last month</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon icon-purple">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Total Orders</h3>
+                        <div class="value">1,248</div>
+                        <div class="trend up">↑ 8.2% from last month</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon icon-green">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Active Users</h3>
+                        <div class="value">3,892</div>
+                        <div class="trend up">↑ 4.1% from last month</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon icon-orange">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                            </path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Products Sold</h3>
+                        <div class="value">4,520</div>
+                        <div class="trend down">↓ 1.4% from last month</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Grid -->
+            
+            <!-- Pending Sellers Section -->
+            {% if pending_sellers %}
+            <div class="card" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h2>Pending Seller Approvals</h2>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Date Joined</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for seller in pending_sellers %}
+                            <tr>
+                                <td>{{ seller.user.first_name }} {{ seller.user.last_name }}</td>
+                                <td>{{ seller.user.email }}</td>
+                                <td>{{ seller.user.date_joined|date:"M d, Y" }}</td>
+                                <td>
+                                    <div style="display:flex; gap:10px;">
+                                        <a href="{% url 'approve_seller' seller.user.id %}" style="background:var(--success); color:white; padding:0.4rem 0.8rem; border-radius:6px; text-decoration:none; font-size:0.85rem; font-weight:600;">Approve</a>
+                                        <a href="{% url 'reject_seller' seller.user.id %}" style="background:var(--danger); color:white; padding:0.4rem 0.8rem; border-radius:6px; text-decoration:none; font-size:0.85rem; font-weight:600;">Reject</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="dashboard-grid">
+
+                <!-- Recent Orders -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Recent Orders</h2>
+                        <button class="btn-ghost">View All</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Product</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#ORD-001</td>
+                                    <td>
+                                        <div class="product-cell"><span>Midnight Aviators</span></div>
+                                    </td>
+                                    <td>John Doe</td>
+                                    <td>Oct 24, 2026</td>
+                                    <td>₹129.00</td>
+                                    <td><span class="status completed">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>#ORD-002</td>
+                                    <td>
+                                        <div class="product-cell"><span>Cloudrunner x Series</span></div>
+                                    </td>
+                                    <td>Sarah Smith</td>
+                                    <td>Oct 24, 2026</td>
+                                    <td>₹245.00</td>
+                                    <td><span class="status pending">Processing</span></td>
+                                </tr>
+                                <tr>
+                                    <td>#ORD-003</td>
+                                    <td>
+                                        <div class="product-cell"><span>AuraPods Pro</span></div>
+                                    </td>
+                                    <td>Mike Johnson</td>
+                                    <td>Oct 23, 2026</td>
+                                    <td>₹199.00</td>
+                                    <td><span class="status completed">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>#ORD-004</td>
+                                    <td>
+                                        <div class="product-cell"><span>Minimalist Trench</span></div>
+                                    </td>
+                                    <td>Emma Wilson</td>
+                                    <td>Oct 22, 2026</td>
+                                    <td>₹380.00</td>
+                                    <td><span class="status canceled">Canceled</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Revenue Chart Placeholder -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Weekly Revenue</h2>
+                        <button class="btn-ghost">Report</button>
+                    </div>
+                    <div class="chart-placeholder">
+                        <div class="bar" style="height: 40%;" data-val="₹2.4K"></div>
+                        <div class="bar" style="height: 60%;" data-val="₹3.2K"></div>
+                        <div class="bar" style="height: 35%;" data-val="₹1.8K"></div>
+                        <div class="bar" style="height: 80%;" data-val="₹4.5K"></div>
+                        <div class="bar" style="height: 55%;" data-val="₹2.9K"></div>
+                        <div class="bar" style="height: 90%;" data-val="₹5.1K"></div>
+                        <div class="bar" style="height: 70%;" data-val="₹3.8K"></div>
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; margin-top: 10px; color: var(--text-muted); font-size: 0.8rem; font-weight: 500;">
+                        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+</body>
+
+</html>

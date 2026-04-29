@@ -1,0 +1,215 @@
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+    :root {
+        --nav-bg: rgba(248, 243, 217, 0.85);
+        --nav-border: rgba(0, 0, 0, 0.08);
+        --primary: #819A91;
+        --primary-hover: #668077;
+        --text-main: #111827;
+        --text-muted: #6B7280;
+    }
+
+    .modern-navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 9999;
+        background: var(--nav-bg);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--nav-border);
+        font-family: 'Outfit', sans-serif;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+    }
+
+    .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1rem 2rem;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .nav-brand {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 0.75rem;
+        text-decoration: none;
+        color: var(--text-main);
+    }
+
+    .brand-icon {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, var(--primary), #A7C1A8);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+        box-shadow: 0 4px 15px rgba(129, 154, 145, 0.3);
+    }
+
+    .brand-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 2.5rem;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .nav-item {
+        text-decoration: none;
+        color: var(--text-main);
+        font-weight: 500;
+        font-size: 1rem;
+        position: relative;
+        padding: 0.5rem 0;
+        transition: color 0.2s ease;
+    }
+
+    .nav-item:hover {
+        color: var(--primary);
+    }
+
+    .nav-item::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary);
+        transition: width 0.3s ease;
+        border-radius: 2px;
+    }
+
+    .nav-item:hover::after {
+        width: 100%;
+    }
+
+    .nav-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 1.25rem;
+    }
+
+    .btn-login,
+    .btn-signup {
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        padding: 0.6rem 1.4rem;
+        border-radius: 8px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-login {
+        color: var(--text-main);
+        background: transparent;
+    }
+
+    .btn-login:hover {
+        color: var(--primary);
+    }
+
+    .btn-signup {
+        color: white;
+        background: var(--primary);
+        box-shadow: 0 4px 12px rgba(129, 154, 145, 0.25);
+    }
+
+    .btn-signup:hover {
+        background: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(129, 154, 145, 0.35);
+    }
+
+    @media (max-width: 768px) {
+        .nav-links {
+            display: none;
+        }
+    }
+</style>
+
+<nav class="modern-navbar">
+    <div class="nav-container">
+        <a href="{% url 'index' %}" class="nav-brand">
+            <div class="brand-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                </svg>
+            </div>
+            <span class="brand-text">ShopNest</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="{% url 'index' %}" class="nav-item">Home</a>
+            <a href="{% url 'products' %}" class="nav-item">Collections</a>
+            <a href="{% url 'categories' %}" class="nav-item">Categories</a>
+            <a href="{% url 'about' %}" class="nav-item">About Us</a>
+        </div>
+
+        <div class="nav-actions">
+            <!-- Search Form -->
+            <form action="{% url 'products' %}" method="get" style="display: flex; align-items: center; background: white; border-radius: 20px; padding: 0.35rem 0.75rem; border: 1px solid var(--nav-border);">
+                <input type="text" name="q" placeholder="Search..." value="{{ search_query|default:'' }}" style="border: none; outline: none; background: transparent; width: 240px; font-size: 0.9rem; font-family: 'Inter', sans-serif; color: var(--text-main);">
+                <button type="submit" style="background: none; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </form>
+            <a href="{% url 'wishlist_detail' %}" class="btn-login" style="position:relative; display:flex; align-items:center; justify-content:center; padding:0.5rem;" title="Wishlist">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+                {% if wishlist|length > 0 %}
+                <span style="position:absolute; top: -2px; right: -2px; background: #EF4444; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold;">{{ wishlist|length }}</span>
+                {% endif %}
+            </a>
+            <a href="{% url 'cart_detail' %}" class="btn-login" style="position:relative; display:flex; align-items:center; justify-content:center; padding:0.5rem;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                {% if cart|length > 0 %}
+                <span style="position:absolute; top: -2px; right: -2px; background: var(--primary); color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold;">{{ cart|length }}</span>
+                {% endif %}
+            </a>
+            {% if request.user.is_authenticated %}
+                {% if request.user.is_superuser %}
+                    <a href="{% url 'admin_dash' %}" class="btn-login">Admin</a>
+                {% else %}
+                    <a href="{% url 'user' %}" class="btn-login">Profile</a>
+                {% endif %}
+                {% if request.user.profile.is_seller %}
+                    <a href="{% url 'seller_dashboard' %}" class="btn-login">Seller Hub</a>
+                {% else %}
+                    <a href="{% url 'seller_registration' %}" class="btn-login">Become a Seller</a>
+                {% endif %}
+                <a href="{% url 'logout' %}" class="btn-signup" style="background:var(--secondary);">Log Out</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn-login">Log In</a>
+                <a href="{% url 'signup' %}" class="btn-signup">Sign Up</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
