@@ -49,4 +49,5 @@ urlpatterns = [
     path('seller-registration/', views.seller_registration_view, name='seller_registration'),
     path('admin/approve-seller/<int:user_id>/', views.approve_seller, name='approve_seller'),
     path('admin/reject-seller/<int:user_id>/', views.reject_seller, name='reject_seller'),
+    path('product/<int:id>/review/', views.add_review, name='add_review'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

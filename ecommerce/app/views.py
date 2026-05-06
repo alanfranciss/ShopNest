@@ -150,6 +150,9 @@ from django.db.models import Q
 def products_view(request):
     category_id = request.GET.get('category')
     search_query = request.GET.get('q')
+    sort = request.GET.get('sort', 'newest')
+    
+    all_categories = Category.objects.all()
     
     if category_id:
         category = get_object_or_404(Category, id=category_id)
@@ -164,13 +167,48 @@ def products_view(request):
             Q(description__icontains=search_query)
         )
         
-    products = products.order_by('-created_at')
+    if sort == 'price_asc':
+        products = products.order_by('price')
+    elif sort == 'price_desc':
+        products = products.order_by('-price')
+    else:
+        products = products.order_by('-created_at')
         
-    return render(request, 'products.html', {'products': products, 'current_category': category, 'search_query': search_query})
+    context = {
+        'products': products,
+        'current_category': category,
+        'search_query': search_query,
+        'all_categories': all_categories,
+        'current_sort': sort
+    }
+        
+    return render(request, 'products.html', context)
 
 def product_detail_view(request, id):
     product = get_object_or_404(Product, id=id)
-    similar_products = Product.objects.filter(category=product.category).exclude(id=product.id)[:4]
+    
+    # Extract keywords from the product name (words longer than 3 characters)
+    words = [w for w in product.name.split() if len(w) > 3]
+    
+    from django.db.models import Q
+    query = Q()
+    for word in words:
+        query |= Q(name__icontains=word)
+        
+    # Try to find products in the same category that also share keywords in the name
+    if query:
+        similar_products = Product.objects.filter(query, category=product.category).exclude(id=product.id).distinct()
+        
+        # If we don't have enough keyword-matched products, fill the rest with same-category products
+        if similar_products.count() < 4:
+            more_products = Product.objects.filter(category=product.category).exclude(id=product.id).exclude(id__in=similar_products.values_list('id', flat=True))
+            similar_products = list(similar_products) + list(more_products)[:4 - similar_products.count()]
+        else:
+            similar_products = similar_products[:4]
+    else:
+        # Fallback if no valid keywords
+        similar_products = Product.objects.filter(category=product.category).exclude(id=product.id)[:4]
+        
     return render(request, 'product_detail.html', {'product': product, 'similar_products': similar_products})
 
 def about_view(request):
@@ -501,3 +539,46 @@ def seller_add_product(request):
 
     categories = Category.objects.all()
     return render(request, 'seller_add_product.html', {'categories': categories})
+
+@login_required(login_url='login')
+def add_review(request, id):
+    product = get_object_or_404(Product, id=id)
+    
+    # Check if user has a delivered order for this product
+    has_delivered_order = OrderItem.objects.filter(
+        order__user=request.user,
+        product=product,
+        status='Delivered'
+    ).exists()
+    
+    if not has_delivered_order and not request.user.is_superuser:
+        messages.error(request, 'You can only review products that have been delivered to you.')
+        return redirect('product_detail', id=product.id)
+
+    from .models import Review
+    # Try to get existing review
+    review = Review.objects.filter(user=request.user, product=product).first()
+
+    if request.method == 'POST':
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+        
+        if rating and comment:
+            if review:
+                review.rating = int(rating)
+                review.comment = comment
+                review.save()
+                messages.success(request, 'Your review has been updated.')
+            else:
+                Review.objects.create(
+                    user=request.user,
+                    product=product,
+                    rating=int(rating),
+                    comment=comment
+                )
+                messages.success(request, 'Your review has been submitted.')
+            return redirect('product_detail', id=product.id)
+        else:
+            messages.error(request, 'Please provide both a rating and a comment.')
+            
+    return render(request, 'add_review.html', {'product': product, 'review': review})

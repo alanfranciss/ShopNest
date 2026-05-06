@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review {{ product.name }} | ShopNest</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+        :root {
+            --primary: #819A91;
+            --primary-hover: #668077;
+            --bg-body: #EEEFE0;
+            --surface: #F8F3D9;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --border: #D1D8BE;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    <div style="padding-top: 100px; min-height: calc(100vh - 80px); display: flex; align-items: center; justify-content: center; background-color: var(--bg-body); padding-bottom: 2rem;">
+        <div style="background: var(--surface); border-radius: 20px; padding: 3rem; width: 100%; max-width: 600px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); border: 1px solid var(--border);">
+            <h1 style="font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 700; color: #2C3E35; margin-bottom: 1rem; text-align: center;">
+                {% if review %}Edit Your Review{% else %}Write a Review{% endif %}
+            </h1>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">
+                Share your thoughts on <strong>{{ product.name }}</strong>
+            </p>
+
+            <form method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                {% csrf_token %}
+                
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: center; margin-bottom: 1rem;">
+                    <label style="font-weight: 600; font-size: 1.1rem; color: var(--text-main);">Rating</label>
+                    <input type="hidden" name="rating" id="rating_input" value="{% if review %}{{ review.rating }}{% else %}0{% endif %}" required>
+                    <div id="star-container" style="display: flex; gap: 8px; cursor: pointer;">
+                        {% for i in "12345" %}
+                        <svg class="star-icon" data-value="{{ forloop.counter }}" width="40" height="40" viewBox="0 0 24 24" 
+                             fill="{% if review and forloop.counter <= review.rating %}#F59E0B{% else %}#E5E7EB{% endif %}" 
+                             stroke="{% if review and forloop.counter <= review.rating %}#F59E0B{% else %}#E5E7EB{% endif %}" 
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: all 0.2s;">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <script>
+                    const stars = document.querySelectorAll('.star-icon');
+                    const ratingInput = document.getElementById('rating_input');
+                    let currentRating = parseInt(ratingInput.value) || 0;
+
+                    const updateStars = (rating, isHover = false) => {
+                        stars.forEach((star, index) => {
+                            const val = index + 1;
+                            if (val <= rating) {
+                                star.setAttribute('fill', isHover ? '#FCD34D' : '#F59E0B');
+                                star.setAttribute('stroke', isHover ? '#FCD34D' : '#F59E0B');
+                                star.style.transform = isHover ? 'scale(1.1)' : 'scale(1)';
+                            } else {
+                                star.setAttribute('fill', '#E5E7EB');
+                                star.setAttribute('stroke', '#E5E7EB');
+                                star.style.transform = 'scale(1)';
+                            }
+                        });
+                    };
+
+                    stars.forEach(star => {
+                        star.addEventListener('mouseover', function() {
+                            updateStars(parseInt(this.getAttribute('data-value')), true);
+                        });
+                        
+                        star.addEventListener('mouseout', function() {
+                            updateStars(currentRating, false);
+                        });
+                        
+                        star.addEventListener('click', function() {
+                            currentRating = parseInt(this.getAttribute('data-value'));
+                            ratingInput.value = currentRating;
+                            updateStars(currentRating, false);
+                        });
+                    });
+
+                    // Ensure form submission doesn't happen with 0 rating
+                    document.querySelector('form').addEventListener('submit', function(e) {
+                        if (ratingInput.value === '0') {
+                            e.preventDefault();
+                            alert('Please select a star rating.');
+                        }
+                    });
+                </script>
+
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <label for="comment" style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);">Your Review</label>
+                    <textarea name="comment" id="comment" rows="5" required placeholder="What did you like or dislike about this product?" style="padding: 1rem; border: 1px solid var(--border); border-radius: 8px; font-family: 'Inter', sans-serif; resize: vertical; background-color: white;">{% if review %}{{ review.comment }}{% endif %}</textarea>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button type="button" onclick="history.back()" style="flex: 1; padding: 1rem; border: none; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 600; background: #E5E7EB; color: var(--text-main); font-family: 'Outfit', sans-serif; transition: background 0.2s; cursor: pointer;" onmouseover="this.style.background='#D1D5DB';" onmouseout="this.style.background='#E5E7EB';">Cancel</button>
+                    <button type="submit" style="flex: 2; padding: 1rem; border: none; border-radius: 8px; font-weight: 600; background: var(--primary); color: white; font-family: 'Outfit', sans-serif; cursor: pointer; transition: background 0.2s; box-shadow: 0 4px 6px rgba(129, 154, 145, 0.2);" onmouseover="this.style.background='var(--primary-hover)';" onmouseout="this.style.background='var(--primary)';">
+                        {% if review %}Update Review{% else %}Submit Review{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+</body>
+</html>

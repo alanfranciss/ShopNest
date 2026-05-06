@@ -379,15 +379,19 @@
                         
                         <div class="item-details">
                             <div class="item-name">{{ item.product.name }}</div>
-                            <div class="item-qty">Qty: {{ item.quantity }} × ${{ item.price }}</div>
+                            <div class="item-qty">Qty: {{ item.quantity }} × ₹{{ item.price }}</div>
                             {% if item.status == 'Pending' or item.status == 'Processing' %}
                             <form action="{% url 'cancel_order_item' item.id %}" method="post" style="margin-top: 0.5rem;" onsubmit="return confirm('Are you sure you want to cancel this item?');">
                                 {% csrf_token %}
                                 <button type="submit" style="background: none; border: none; color: #EF4444; font-size: 0.85rem; font-weight: 500; cursor: pointer; padding: 0; text-decoration: underline;">Cancel Item</button>
                             </form>
+                            {% elif item.status == 'Delivered' %}
+                            <div style="margin-top: 0.5rem;">
+                                <a href="{% url 'add_review' item.product.id %}" style="display: inline-block; background: var(--primary); color: white; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600; text-decoration: none; font-family: 'Outfit', sans-serif;">Write a Review</a>
+                            </div>
                             {% endif %}
                         </div>
-                        <div class="item-price">${% widthratio item.price 1 item.quantity %}</div>
+                        <div class="item-price">₹{% widthratio item.price 1 item.quantity %}</div>
                     </div>
 
                     {% if item.status != 'Cancelled' %}
@@ -438,7 +442,7 @@
                 <div class="totals-box">
                     <div class="total-row">
                         <span>Subtotal</span>
-                        <span>${{ order.total_amount }}</span>
+                        <span>₹{{ order.total_amount }}</span>
                     </div>
                     <div class="total-row">
                         <span>Shipping</span>
@@ -446,7 +450,7 @@
                     </div>
                     <div class="total-row grand-total">
                         <span>Total</span>
-                        <span>${{ order.total_amount }}</span>
+                        <span>₹{{ order.total_amount }}</span>
                     </div>
                 </div>
             </div>

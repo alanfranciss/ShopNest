@@ -306,6 +306,39 @@
             </div>
         </div>
 
+        <section class="section-reviews" style="padding: 4rem 2rem; max-width: 1400px; margin: 0 auto; border-top: 1px solid var(--border);">
+            <h2 style="font-size: 2rem; color: var(--secondary); margin-bottom: 2rem; font-family: 'Outfit'; font-weight: 700;">Customer Reviews</h2>
+            
+            {% if product.reviews.all %}
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+                {% for review in product.reviews.all %}
+                <div style="background: var(--surface); border-radius: 16px; padding: 1.5rem; border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                        <div>
+                            <div style="font-weight: 600; color: var(--text-main); font-family: 'Outfit', sans-serif;">{{ review.user.first_name }} {{ review.user.last_name }}</div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted);">{{ review.created_at|date:"M d, Y" }}</div>
+                        </div>
+                        <div style="display: flex; gap: 2px;">
+                            {% for i in "12345" %}
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="{% if forloop.counter <= review.rating %}#F59E0B{% else %}#E5E7EB{% endif %}" stroke="{% if forloop.counter <= review.rating %}#F59E0B{% else %}#E5E7EB{% endif %}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <p style="color: var(--text-main); line-height: 1.6; font-size: 0.95rem;">
+                        {{ review.comment }}
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 3rem; background: var(--surface); border-radius: 16px; border: 1px dashed var(--border);">
+                <p style="color: var(--text-muted); font-size: 1.1rem;">No reviews yet. Purchase this product to be the first to review it!</p>
+            </div>
+            {% endif %}
+        </section>
+
         {% if similar_products %}
         <section class="section-products" style="padding: 4rem 2rem; max-width: 1400px; margin: 0 auto;">
             <h2 style="font-size: 2rem; color: var(--secondary); margin-bottom: 2rem; font-family: 'Outfit'; font-weight: 700;">Similar Products</h2>

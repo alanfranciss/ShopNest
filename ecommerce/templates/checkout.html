@@ -262,7 +262,7 @@
                             <h3 style="margin-bottom: 1rem; color: var(--secondary);">Order Summary</h3>
                             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: var(--text-muted);">
                                 <span>Subtotal ({{ cart|length }} items):</span>
-                                <strong>${{ cart.get_total_price }}</strong>
+                                <strong>₹{{ cart.get_total_price }}</strong>
                             </div>
                             <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); color: var(--text-muted);">
                                 <span>Premium Shipping:</span>
@@ -270,12 +270,12 @@
                             </div>
                             <div style="display: flex; justify-content: space-between; font-size: 1.5rem; font-weight: 700; color: var(--secondary); font-family: 'Outfit';">
                                 <span>Total:</span>
-                                <span>${{ cart.get_total_price }}</span>
+                                <span>₹{{ cart.get_total_price }}</span>
                             </div>
                         </div>
 
                         <button type="submit" class="btn-submit">
-                            Place Order (${{ cart.get_total_price }})
+                            Place Order (₹{{ cart.get_total_price }})
                         </button>
                     </div>
                 </div>
