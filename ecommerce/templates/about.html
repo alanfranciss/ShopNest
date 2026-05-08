@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us | ShopNest</title>
     <style>
+        /* ==========================================================================
+           1. IMPORTS & VARIABLES
+           ========================================================================== */
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
 
         :root {
@@ -19,6 +22,9 @@
             --border: #D1D8BE;
         }
 
+        /* ==========================================================================
+           2. RESET & BASE STYLES
+           ========================================================================== */
         * {
             margin: 0;
             padding: 0;
@@ -30,24 +36,25 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             overflow-x: hidden;
-        
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
         }
 
         h1, h2, h3, h4, .font-heading {
             font-family: 'Outfit', sans-serif;
         }
 
-        /* Nav Padding */
+        /* Nav Padding Clearance */
         .content-wrapper {
-            padding-top: 100px;
-        
+            padding-top: 85px; 
             flex-grow: 1;
         }
 
-        /* About Hero Section */
+        /* ==========================================================================
+           3. ABOUT HERO SECTION
+           ========================================================================== */
         .about-hero {
             position: relative;
             padding: 5rem 2rem;
@@ -111,7 +118,9 @@
             margin-bottom: 2rem;
         }
 
-        /* Grid Section */
+        /* ==========================================================================
+           4. STORY SECTION (GRID)
+           ========================================================================== */
         .story-section {
             max-width: 1400px;
             margin: 0 auto;
@@ -128,7 +137,8 @@
             overflow: hidden;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
             border: 8px solid var(--surface);
-            height: 600px;
+            aspect-ratio: 4 / 5; /* Fluid height instead of fixed 600px */
+            width: 100%;
         }
 
         .story-image-wrapper img {
@@ -143,19 +153,22 @@
         }
 
         .story-content h2 {
-            font-size: 2.5rem;
+            font-size: clamp(2rem, 4vw, 2.5rem);
             color: var(--secondary);
             margin-bottom: 1.5rem;
+            line-height: 1.2;
         }
 
         .story-content p {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: var(--text-muted);
             line-height: 1.8;
             margin-bottom: 1.5rem;
         }
 
-        /* Values Section */
+        /* ==========================================================================
+           5. CORE VALUES SECTION
+           ========================================================================== */
         .values-section {
             background-color: var(--surface);
             padding: 6rem 2rem;
@@ -173,14 +186,22 @@
         }
 
         .values-header h2 {
-            font-size: 3rem;
+            font-size: clamp(2.2rem, 5vw, 3rem);
             color: var(--secondary);
             margin-bottom: 1rem;
+        }
+        
+        .values-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
         }
 
         .values-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2.5rem;
         }
 
@@ -209,6 +230,7 @@
         .value-card:hover {
             transform: translateY(-10px);
             color: white;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
 
         .value-card:hover::before {
@@ -238,7 +260,7 @@
         }
 
         .value-card h3 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             color: var(--secondary);
             margin-bottom: 1rem;
         }
@@ -248,22 +270,73 @@
             line-height: 1.6;
         }
 
-        /* Responsive Layouts */
+        /* ==========================================================================
+           6. RESPONSIVE MEDIA QUERIES
+           ========================================================================== */
         @media (max-width: 968px) {
             .story-section {
                 grid-template-columns: 1fr;
                 gap: 3rem;
-                padding: 2rem;
+                padding: 3rem 2rem;
             }
 
             .story-image-wrapper {
-                height: 400px;
-                order: -1;
+                aspect-ratio: 16 / 9; /* Shorter, wider image for tablets */
+                order: -1; /* Puts image above text on smaller screens */
             }
 
             .about-hero {
-                margin: 0 1rem 3rem;
+                margin: 0 1.5rem 3rem;
                 padding: 4rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .about-hero {
+                margin: 0 1rem 2rem;
+                padding: 3rem 1.25rem;
+                border-radius: 24px;
+            }
+            
+            .hero-text {
+                font-size: 1rem;
+            }
+
+            .story-section {
+                padding: 2rem 1.25rem;
+                gap: 2rem;
+            }
+
+            .story-image-wrapper {
+                aspect-ratio: 1 / 1; /* Square image for mobile */
+                border-width: 4px; /* Thinner border for small screens */
+                border-radius: 20px;
+            }
+
+            .story-content p {
+                font-size: 1rem;
+            }
+
+            .values-section {
+                padding: 4rem 1.25rem;
+                margin-top: 2rem;
+            }
+
+            .values-header {
+                margin-bottom: 2.5rem;
+            }
+
+            .values-header p {
+                font-size: 1rem;
+            }
+
+            .values-grid {
+                grid-template-columns: 1fr; /* Stack value cards on mobile */
+                gap: 1.5rem;
+            }
+
+            .value-card {
+                padding: 2.5rem 1.5rem;
             }
         }
     </style>
@@ -299,7 +372,7 @@
             <div class="values-container">
                 <div class="values-header">
                     <h2>Our Core Values</h2>
-                    <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">These principles guide everything we do—from the products we design to the way we treat our customers and the planet.</p>
+                    <p>These principles guide everything we do—from the products we design to the way we treat our customers and the planet.</p>
                 </div>
                 
                 <div class="values-grid">

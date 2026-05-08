@@ -1,0 +1,15 @@
+#complete git commands
+
+git init 
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/alanfrancis2310@gmail.com/
+git push -u origin main
+
+--------
+#update code 
+
+git add .
+git commit -m "<commit message>"
+git push

@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Product | ShopNest Seller</title>
     <style>
+        /* ==========================================================================
+           1. IMPORTS & VARIABLES
+           ========================================================================== */
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
 
         :root {
@@ -16,8 +19,13 @@
             --text-main: #111827;
             --text-muted: #6B7280;
             --border: #D1D8BE;
+            --danger: #EF4444;
+            --success: #10B981;
         }
 
+        /* ==========================================================================
+           2. RESET & BASE STYLES
+           ========================================================================== */
         * {
             margin: 0;
             padding: 0;
@@ -31,28 +39,60 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
         }
 
+        /* Wrapper to clear fixed navbar perfectly */
+        .content-wrapper {
+            padding-top: 85px; 
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==========================================================================
+           3. PAGE HEADER
+           ========================================================================== */
         .page-header {
             background: linear-gradient(135deg, #1E3E2F 0%, #112A1F 100%);
-            padding: 8rem 2rem 4rem;
+            padding: 4rem 2rem 5rem;
             color: white;
             text-align: center;
         }
 
         .page-header h1 {
             font-family: 'Outfit', sans-serif;
-            font-size: 2.5rem;
+            font-size: clamp(2rem, 5vw, 2.5rem);
             margin-bottom: 0.5rem;
+            font-weight: 700;
         }
 
+        /* ==========================================================================
+           4. DASHBOARD CONTAINER & CARD
+           ========================================================================== */
         .dashboard-container {
             max-width: 800px;
-            margin: -3rem auto 4rem;
+            margin: -3rem auto 4rem; /* Negative margin pulls card over header */
             padding: 0 2rem;
             width: 100%;
             position: relative;
             z-index: 10;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        
+        .btn-back:hover {
+            color: white;
         }
 
         .card {
@@ -69,39 +109,86 @@
             align-items: center;
             margin-bottom: 2rem;
             border-bottom: 1px solid var(--border);
-            padding-bottom: 1rem;
+            padding-bottom: 1.5rem;
         }
 
         .card-header h2 {
             font-family: 'Outfit', sans-serif;
             font-size: 1.5rem;
             font-weight: 600;
+            color: var(--secondary);
+        }
+
+        /* ==========================================================================
+           5. NOTIFICATION MESSAGES
+           ========================================================================== */
+        .messages {
+            margin-bottom: 1.5rem;
+        }
+        .message {
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        .message.success {
+            background-color: #DEF7EC;
+            color: #03543F;
+            border: 1px solid #A4CAFE;
+        }
+        .message.error {
+            background-color: #FDE8E8;
+            color: #9B1C1C;
+            border: 1px solid #F8B4B4;
+        }
+
+        /* ==========================================================================
+           6. FORM ELEMENTS
+           ========================================================================== */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
         }
 
         .form-group {
             margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
         .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
             font-weight: 500;
             color: var(--text-main);
+            font-size: 0.95rem;
         }
 
         .form-control {
             width: 100%;
-            padding: 0.8rem 1rem;
+            padding: 0.85rem 1rem;
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 10px;
             font-family: 'Inter', sans-serif;
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: all 0.2s;
             background: #fff;
+            color: var(--text-main);
+            appearance: none; /* Removes default styling for mobile */
+            outline: none;
+        }
+
+        /* Custom dropdown arrow for standard select menus */
+        select.form-control {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234B5563' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
         }
 
         .form-control:focus {
-            outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(129, 154, 145, 0.2);
         }
@@ -109,53 +196,88 @@
         textarea.form-control {
             resize: vertical;
             min-height: 120px;
+            line-height: 1.5;
         }
 
+        /* File Input Styling */
+        input[type="file"].form-control {
+            padding: 0.6rem 1rem;
+            background: #F9FAFB;
+            cursor: pointer;
+        }
+
+        /* ==========================================================================
+           7. BUTTONS
+           ========================================================================== */
         .btn-submit {
             background: var(--primary);
             color: white;
-            padding: 0.8rem 2rem;
+            padding: 1rem 2rem;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 1.05rem;
             cursor: pointer;
             transition: all 0.2s ease;
             width: 100%;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Outfit', sans-serif;
+            margin-top: 0.5rem;
         }
 
         .btn-submit:hover {
             background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(129, 154, 145, 0.2);
         }
 
-        .btn-back {
-            display: inline-block;
-            color: var(--text-muted);
-            text-decoration: none;
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-        
-        .btn-back:hover {
-            color: var(--text-main);
+        /* ==========================================================================
+           8. RESPONSIVE MEDIA QUERIES
+           ========================================================================== */
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr; /* Stacks Price and Quantity on tablets */
+                gap: 0;
+            }
         }
 
-        .messages {
-            margin-bottom: 1rem;
-        }
-        .message {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-        }
-        .message.success {
-            background-color: #DEF7EC;
-            color: #03543F;
-        }
-        .message.error {
-            background-color: #FDE8E8;
-            color: #9B1C1C;
+        @media (max-width: 640px) {
+            .page-header {
+                padding: 3rem 1.5rem 4rem;
+            }
+
+            .dashboard-container {
+                margin-top: -2rem;
+                padding: 0 1.25rem;
+            }
+
+            .btn-back {
+                color: var(--text-muted); /* Changes color since it's no longer over the dark header background */
+                margin-top: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+                border-radius: 16px;
+            }
+
+            .card-header {
+                margin-bottom: 1.5rem;
+                padding-bottom: 1rem;
+            }
+
+            .card-header h2 {
+                font-size: 1.25rem;
+            }
+
+            .form-group {
+                margin-bottom: 1.25rem;
+            }
+
+            .btn-submit {
+                padding: 1rem;
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -163,68 +285,78 @@
 <body>
     {% include 'navbar.html' %}
 
-    <div class="page-header">
-        <h1>Add New Product</h1>
-    </div>
+    <div class="content-wrapper">
+        <div class="page-header">
+            <h1>Add New Product</h1>
+        </div>
 
-    <div class="dashboard-container">
-        <a href="{% url 'seller_dashboard' %}" class="btn-back">← Back to Dashboard</a>
-        
-        <div class="card">
-            <div class="card-header">
-                <h2>Product Details</h2>
+        <div class="dashboard-container">
+            <a href="{% url 'seller_dashboard' %}" class="btn-back">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Dashboard
+            </a>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2>Product Details</h2>
+                </div>
+
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                    <div class="message {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form method="POST" action="{% url 'seller_add_product' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="name">Product Name *</label>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Vintage Leather Jacket" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Category *</label>
+                        <select id="category" name="category" class="form-control" required>
+                            <option value="" disabled selected>Select a category</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="price">Price (₹) *</label>
+                            <input type="number" id="price" name="price" step="0.01" min="0" placeholder="0.00" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="quantity">Quantity in Stock *</label>
+                            <input type="number" id="quantity" name="quantity" min="1" value="1" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" class="form-control" placeholder="Describe your product's features and aesthetic..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image">Product Image</label>
+                        <input type="file" id="image" name="image" class="form-control" accept="image/*">
+                    </div>
+
+                    <button type="submit" class="btn-submit">Add Product</button>
+                </form>
             </div>
-
-            {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                <div class="message {{ message.tags }}">
-                    {{ message }}
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-
-            <form method="POST" action="{% url 'seller_add_product' %}" enctype="multipart/form-data">
-                {% csrf_token %}
-                
-                <div class="form-group">
-                    <label for="name">Product Name *</label>
-                    <input type="text" id="name" name="name" class="form-control" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="category">Category *</label>
-                    <select id="category" name="category" class="form-control" required>
-                        <option value="">Select a category</option>
-                        {% for category in categories %}
-                        <option value="{{ category.id }}">{{ category.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="price">Price (₹) *</label>
-                    <input type="number" id="price" name="price" step="0.01" min="0" class="form-control" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="quantity">Quantity in Stock *</label>
-                    <input type="number" id="quantity" name="quantity" min="1" value="1" class="form-control" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <textarea id="description" name="description" class="form-control"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="image">Product Image</label>
-                    <input type="file" id="image" name="image" class="form-control" accept="image/*">
-                </div>
-
-                <button type="submit" class="btn-submit">Add Product</button>
-            </form>
         </div>
     </div>
 

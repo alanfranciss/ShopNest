@@ -4,422 +4,389 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopNest | {% if current_category %}{{ current_category.name }}{% else %}All Products{% endif %}</title>
+    <title>ShopNest | Products</title>
     <style>
+        /* ==========================================================================
+           1. IMPORTS & VARIABLES
+           ========================================================================== */
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
 
         :root {
             --primary: #819A91;
-            --primary-light: #A7C1A8;
             --secondary: #2C3E35;
             --bg-body: #EEEFE0;
             --surface: #F8F3D9;
             --text-main: #111827;
-            --text-muted: #6B7280;
+            --text-muted: #4B5563;
             --border: #D1D8BE;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* ==========================================================================
+           2. RESET & BASE STYLES
+           ========================================================================== */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            -webkit-font-smoothing: antialiased;
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            overflow-x: hidden;
-        
+        /* INCREASED PADDING: Pushes content down so it isn't hidden by your navbar */
+        .content-wrapper { 
+            padding-top: 85px; 
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
         }
 
-        h1,
-        h2,
-        h3,
-        h4,
-        .font-heading {
-            font-family: 'Outfit', sans-serif;
-        }
-
-        .content-wrapper {
-            padding-top: 25px;
+        /* ==========================================================================
+           3. MODERN MOBILE SEARCH & FILTER BAR (AMAZON/FLIPKART STYLE)
+           ========================================================================== */
         
-            flex-grow: 1;
+        /* Container for the sticky header area */
+        .shop-controls {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            /* INCREASED TOP: Must match the padding-top above to stick right below the navbar */
+            top: 85px; 
+            z-index: 100;
+            width: 100%;
         }
 
-        .page-header {
-            background: linear-gradient(135deg, var(--secondary) 0%, #1E1B4B 100%);
-            color: white;
-            padding: 5rem 2rem 4rem;
-            text-align: center;
+        .search-row {
+            padding: 10px 15px;
+            background: var(--secondary); /* Premium dark background for search */
+        }
+
+        .search-container {
             position: relative;
-            overflow: hidden;
+            width: 100%;
         }
 
-        .page-header::before {
-            content: '';
+        .search-input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            outline: none;
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 0 2px rgba(129, 154, 145, 0.5);
+        }
+
+        .search-icon {
             position: absolute;
-            top: -50%;
-            left: -10%;
-            width: 50%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(129, 154, 145, 0.2) 0%, transparent 60%);
-            transform: rotate(30deg);
-            pointer-events: none;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
         }
 
-        .page-title {
-            font-size: clamp(2.5rem, 4vw, 3.5rem);
-            font-weight: 800;
-            margin-bottom: 1rem;
-            letter-spacing: -0.02em;
+        /* Sort and Filter Row */
+        .action-bar {
+            display: flex;
+            background: white;
+        }
+
+        .action-item {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            border-right: 1px solid var(--border);
+            text-decoration: none;
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            background: none;
             position: relative;
-            z-index: 10;
         }
 
-        .page-subtitle {
-            font-size: 1.15rem;
-            color: #CBD5E1;
-            max-width: 600px;
-            margin: 0 auto;
+        .action-item:last-child {
+            border-right: none;
+        }
+
+        .action-item svg {
+            margin-right: 8px;
+            color: var(--primary);
+        }
+
+        /* Hidden but functional selects to mimic App button behavior */
+        .action-select-wrapper {
             position: relative;
-            z-index: 10;
-            line-height: 1.6;
+            width: 100%;
+            display: flex;
         }
 
-        /* Products Section */
+        .action-select {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* ==========================================================================
+           4. PRODUCT GRID (COMPACT E-COMMERCE STYLE)
+           ========================================================================== */
         .section-products {
-            padding: 4rem 2rem 8rem;
-            max-width: 1400px;
+            padding: 15px;
+            max-width: 1280px;
             margin: 0 auto;
+            flex-grow: 1;
         }
 
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2.5rem;
+            grid-template-columns: repeat(2, 1fr); /* Default mobile 2 columns */
+            gap: 12px;
         }
 
         .product-card {
-            background: #F8F3D9;
-            border-radius: 20px;
-            padding: 1rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-            border: 1px solid var(--border);
-            transition: all 0.4s ease;
-            position: relative;
-        }
-
-        .product-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-            border-color: rgba(129, 154, 145, 0.3);
-        }
-
-        .product-img {
-            height: 280px;
-            width: 100%;
-            border-radius: 12px;
-            background-color: #F3F4F6;
+            background: white;
+            border-radius: 8px;
             overflow: hidden;
-            position: relative;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
         }
 
-        .product-img>div {
+        .product-img-wrapper {
+            width: 100%;
+            aspect-ratio: 1/1; /* Perfect squares for clean grid */
+            position: relative;
+            background: #f3f3f3;
+        }
+
+        .product-img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+        }
+
+        .product-img-placeholder {
             width: 100%;
             height: 100%;
-            background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Outfit';
-            font-size: 2rem;
-            color: white;
-            font-weight: bold;
-            opacity: 0.8;
-            transition: transform 0.5s;
-        }
-
-        .product-card:hover .product-img>div {
-            transform: scale(1.05);
-        }
-
-        /* Assigning a few random gradients for fallback images based on DOM order */
-        .product-card:nth-child(2n) .product-img>div {
-            background: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);
-        }
-
-        .product-card:nth-child(3n) .product-img>div {
-            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
-        }
-
-        .product-card:nth-child(4n) .product-img>div {
-            background: linear-gradient(120deg, #fbc2eb 0%, #a6c1ee 100%);
-        }
-
-        .btn-add {
-            position: absolute;
-            bottom: 1rem;
-            right: 1rem;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: #F8F3D9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-main);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-
-        .product-card:hover .btn-add {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .btn-add:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .product-info {
-            padding: 1.5rem 0.5rem 0.5rem;
-        }
-
-        .product-category {
-            font-size: 0.85rem;
+            font-family: 'Outfit', sans-serif;
             color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
+            background: var(--bg-body);
         }
 
+        .product-info { 
+            padding: 10px; 
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        
         .product-name {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--secondary);
-            margin-bottom: 0.5rem;
-            font-family: 'Outfit', sans-serif;
-            text-decoration: none;
-            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 5px;
+            height: 34px; /* Force consistent height for 2 lines of text */
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            line-height: 1.3;
         }
 
-        .product-price {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: var(--primary);
+        .product-price { 
+            font-weight: 700; 
+            color: var(--secondary); 
+            font-size: 15px; 
+            margin-top: auto; /* Pushes price to bottom if name is short */
         }
 
-        .empty-state {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 5rem 2rem;
-            background: #F8F3D9;
-            border-radius: 20px;
-            border: 1px dashed var(--border);
-            margin-top: 2rem;
+        /* Wishlist Icon Button */
+        .wishlist-form {
+            position: absolute; 
+            top: 8px; 
+            right: 8px;
+            margin: 0;
+            z-index: 10;
         }
-
-        .empty-state h3 {
-            font-size: 1.75rem;
-            color: var(--secondary);
-            margin-bottom: 1rem;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        .empty-state p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
+        
+        .wishlist-btn {
+            background: rgba(255,255,255,0.9);
+            border: none; 
+            border-radius: 50%;
+            width: 32px; 
+            height: 32px;
+            display: flex; 
+            align-items: center; 
             justify-content: center;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 1rem;
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-family: 'Outfit', sans-serif;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             cursor: pointer;
-            border: none;
         }
+        
+        .wishlist-btn-active { color: var(--danger); fill: var(--danger); }
+        .wishlist-btn-inactive { color: var(--text-muted); }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 10px 25px rgba(129, 154, 145, 0.3);
+        /* ==========================================================================
+           5. MEDIA QUERIES (DESKTOP ADJUSTMENTS)
+           ========================================================================== */
+        @media (min-width: 768px) {
+            .product-grid { 
+                grid-template-columns: repeat(4, 1fr); 
+                gap: 20px;
+            }
+            .shop-controls { 
+                position: relative; 
+                top: 0; 
+                margin-bottom: 20px; 
+                background: transparent;
+                border-bottom: none;
+            }
+            .search-row { 
+                background: transparent; 
+                padding: 20px 0; 
+            }
+            .search-input { 
+                border: 1px solid var(--border); 
+            }
+            .action-bar { 
+                border: 1px solid var(--border); 
+                border-radius: 8px; 
+            }
         }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(129, 154, 145, 0.4);
-            background: #668077;
+        
+        @media (min-width: 1024px) {
+            .product-grid { 
+                grid-template-columns: repeat(5, 1fr); 
+            }
         }
     </style>
 </head>
 
 <body>
 
+    <!-- Include your global Navbar -->
     {% include 'navbar.html' %}
 
     <div class="content-wrapper">
-        <header class="page-header">
-            <h1 class="page-title">
-                {% if search_query %}
-                Search Results for "{{ search_query }}"
-                {% elif current_category %}
-                {{ current_category.name }}
-                {% else %}
-                Discover Our Collection
-                {% endif %}
-            </h1>
-            <p class="page-subtitle">
-                {% if search_query %}
-                Showing products matching your search.
-                {% elif current_category %}
-                Explore our exclusive selection of {{ current_category.name|lower }}.
-                {% else %}
-                Find everything you need to elevate your aesthetic in one curated place.
-                {% endif %}
-            </p>
-        </header>
+        
+        <!-- AMAZON/FLIPKART STYLE CONTROL BAR -->
+        <form method="get" action="{% url 'products' %}" id="filter-form">
+            <div class="shop-controls">
+                
+                <!-- Search Row -->
+                <div class="search-row">
+                    <div class="search-container">
+                        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" name="q" value="{{ search_query|default:'' }}" class="search-input" placeholder="Search for products, brands and more">
+                    </div>
+                </div>
 
-        <section class="section-products">
-            <div style="margin-bottom: 2.5rem; background: var(--surface); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
-                <form method="get" action="{% url 'products' %}" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
+                <!-- Action Bar (Sort & Filter) -->
+                <div class="action-bar">
                     
-                    <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 0.5rem;">
-                        <label for="q" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Search</label>
-                        <div style="position: relative;">
-                            <input type="text" name="q" id="q" value="{{ search_query|default:'' }}" placeholder="Search products..." style="width: 100%; padding: 0.8rem 1rem 0.8rem 2.5rem; border: 1px solid var(--border); border-radius: 8px; font-family: 'Inter', sans-serif; background: white;">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%);">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            </svg>
-                        </div>
-                    </div>
-
-                    <div style="flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 0.5rem;">
-                        <label for="category" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Category</label>
-                        <select name="category" id="category" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border); border-radius: 8px; font-family: 'Inter', sans-serif; background: white; cursor: pointer;">
-                            <option value="">All Categories</option>
-                            {% for cat in all_categories %}
-                            <option value="{{ cat.id }}" {% if current_category and current_category.id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <div style="flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 0.5rem;">
-                        <label for="sort" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Sort By</label>
-                        <select name="sort" id="sort" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border); border-radius: 8px; font-family: 'Inter', sans-serif; background: white; cursor: pointer;">
-                            <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest Arrivals</option>
+                    <!-- Sort Button with Hidden Native Select -->
+                    <div class="action-item action-select-wrapper">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9l5 4M13 19l5-4-5-4M6 9h12M18 15H6"></path></svg>
+                        Sort
+                        <select name="sort" class="action-select" onchange="document.getElementById('filter-form').submit();">
+                            <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest</option>
                             <option value="price_asc" {% if current_sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
                             <option value="price_desc" {% if current_sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
                         </select>
                     </div>
 
-                    <div style="display: flex; gap: 0.5rem; align-items: stretch; margin-top: auto;">
-                        <button type="submit" class="btn btn-primary" style="padding: 0.8rem 1.5rem; height: 100%; box-shadow: none;">Apply</button>
-                        {% if search_query or current_category or current_sort != 'newest' %}
-                        <a href="{% url 'products' %}" class="btn" style="padding: 0.8rem 1rem; height: 100%; background: white; border: 1px solid var(--border); color: var(--text-main);">Clear</a>
-                        {% endif %}
+                    <!-- Filter (Category) Button with Hidden Native Select -->
+                    <div class="action-item action-select-wrapper">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                        Filter
+                        <select name="category" class="action-select" onchange="document.getElementById('filter-form').submit();">
+                            <option value="">All Categories</option>
+                            {% for cat in all_categories %}
+                                <option value="{{ cat.id }}" {% if current_category and current_category.id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                </form>
+                    
+                </div>
             </div>
+        </form>
 
+        <!-- PRODUCT GRID -->
+        <section class="section-products">
             <div class="product-grid">
                 {% if products %}
-                {% for product in products %}
-                <div class="product-card">
-                    <div class="product-img">
-                        {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}"
-                            style="width: 100%; height: 100%; object-fit: cover;">
-                        {% else %}
-                        <div>{{ product.name|slice:":4" }}</div>
-                        {% endif %}
-                        {% if product.id in wishlist_product_ids %}
-                        <form action="{% url 'wishlist_remove' product.id %}" method="post"
-                            style="margin:0; position:absolute; top:0.5rem; right:0.5rem; z-index:10;">
-                            {% csrf_token %}
-                            <button type="submit"
-                                style="background:white; border:none; width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#EF4444; box-shadow:0 2px 10px rgba(0,0,0,0.1);" title="Remove from Wishlist">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="#EF4444" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path
-                                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                                    </path>
-                                </svg>
-                            </button>
-                        </form>
-                        {% else %}
-                        <form action="{% url 'wishlist_add' product.id %}" method="post"
-                            style="margin:0; position:absolute; top:0.5rem; right:0.5rem; z-index:10;">
-                            {% csrf_token %}
-                            <button type="submit"
-                                style="background:white; border:none; width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-muted); box-shadow:0 2px 10px rgba(0,0,0,0.1);"
-                                onmouseover="this.style.color='#EF4444'"
-                                onmouseout="this.style.color='var(--text-muted)'" title="Save to Wishlist">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path
-                                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                                    </path>
-                                </svg>
-                            </button>
-                        </form>
-                        {% endif %}
-                        <form action="{% url 'cart_add' product.id %}" method="post" style="margin:0;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn-add" style="border:none; cursor:pointer;">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                </svg>
-                            </button>
-                        </form>
-                    </div>
-                    <div class="product-info">
-                        <div class="product-category">{{ product.category.name }}</div>
-                        <a href="{% url 'product_detail' product.id %}" class="product-name">{{ product.name }}</a>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
-                            <div class="product-price">₹{{ product.price }}</div>
-                            <form action="{% url 'cart_add' product.id %}" method="post" style="margin:0;">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem; border-radius: 8px;">Buy Now</button>
-                            </form>
+                    {% for product in products %}
+                    
+                    <!-- Wrap the whole card in an anchor tag to make it fully clickable like an app -->
+                    <a href="{% url 'product_detail' product.id %}" class="product-card">
+                        
+                        <div class="product-img-wrapper">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
+                            {% else %}
+                                <div class="product-img-placeholder">ShopNest</div>
+                            {% endif %}
+                            
+                            <!-- Wishlist Logic -->
+                            {% if product.id in wishlist_product_ids %}
+                                <form action="{% url 'wishlist_remove' product.id %}" method="post" class="wishlist-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="wishlist-btn wishlist-btn-active" title="Remove from Wishlist">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                                    </button>
+                                </form>
+                            {% else %}
+                                <form action="{% url 'wishlist_add' product.id %}" method="post" class="wishlist-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="wishlist-btn wishlist-btn-inactive" title="Save to Wishlist">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                                    </button>
+                                </form>
+                            {% endif %}
                         </div>
-                    </div>
-                </div>
-                {% endfor %}
+                        
+                        <div class="product-info">
+                            <h3 class="product-name">{{ product.name }}</h3>
+                            <div class="product-price">₹{{ product.price }}</div>
+                        </div>
+                        
+                    </a>
+                    {% endfor %}
                 {% else %}
-                <div class="empty-state">
-                    <h3>No products found</h3>
-                    <p>We couldn't find any products in this category. Check back later!</p>
-                    {% if current_category %}
-                    <a href="{% url 'products' %}" class="btn btn-primary">View All Products</a>
-                    {% endif %}
-                </div>
+                    <!-- Empty State -->
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 15px; opacity: 0.5;">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <h3 style="font-family: 'Outfit', sans-serif; color: var(--secondary); margin-bottom: 8px;">No products found</h3>
+                        <p style="color: var(--text-muted); font-size: 14px;">Try adjusting your filters or search query.</p>
+                    </div>
                 {% endif %}
             </div>
         </section>
     </div>
 
-    <!-- Include the Footer -->
+    <!-- Include your global Footer -->
     {% include 'footer.html' %}
 </body>
-
 </html>

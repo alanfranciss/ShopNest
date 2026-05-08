@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ product.name }} | ShopNest</title>
     <style>
+        /* ==========================================================================
+           1. IMPORTS & VARIABLES
+           ========================================================================== */
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
 
         :root {
@@ -17,8 +20,12 @@
             --text-main: #111827;
             --text-muted: #6B7280;
             --border: #D1D8BE;
+            --danger: #EF4444;
         }
 
+        /* ==========================================================================
+           2. RESET & BASE STYLES
+           ========================================================================== */
         * {
             margin: 0;
             padding: 0;
@@ -30,55 +37,61 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
-        h1,
-        h2,
-        h3,
-        h4,
-        .font-heading {
+        h1, h2, h3, h4, .font-heading {
             font-family: 'Outfit', sans-serif;
         }
 
         .content-wrapper {
-            padding-top: 100px;
+            padding-top: 85px; /* Navbar clearance */
             min-height: calc(100vh - 80px);
+            flex-grow: 1;
         }
 
+        /* ==========================================================================
+           3. MAIN PRODUCT LAYOUT
+           ========================================================================== */
         .product-container {
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 3rem 2rem;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 4rem;
             align-items: start;
         }
 
+        /* Product Gallery */
         .product-gallery {
             background: #F8F3D9;
-            border-radius: 24px;
-            padding: 2rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 600px;
             position: relative;
             overflow: hidden;
+            border: 1px solid var(--border);
+            aspect-ratio: 4 / 5; /* Fluid height scaling */
         }
 
         .product-gallery img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 16px;
+            border-radius: 12px;
         }
 
-        .product-gallery .placeholder {
+        .placeholder-image {
             width: 100%;
             height: 100%;
-            border-radius: 16px;
+            border-radius: 12px;
             background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
             display: flex;
             align-items: center;
@@ -89,28 +102,29 @@
             font-weight: bold;
         }
 
+        /* Product Details */
         .product-details {
-            padding: 2rem 0;
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1.25rem;
+            padding: 1rem 0;
         }
 
         .category-badge {
             display: inline-block;
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 1rem;
             background: rgba(129, 154, 145, 0.1);
             color: var(--primary);
             border-radius: 9999px;
             font-weight: 600;
-            font-size: 0.875rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             width: max-content;
         }
 
         .product-title {
-            font-size: 3rem;
+            font-size: clamp(2.2rem, 4vw, 3.2rem); /* Fluid typography */
             font-weight: 800;
             color: var(--secondary);
             line-height: 1.1;
@@ -118,90 +132,371 @@
         }
 
         .product-price {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 700;
             color: var(--primary);
             font-family: 'Outfit', sans-serif;
         }
 
         .product-description {
-            font-size: 1.125rem;
+            font-size: 1.05rem;
             color: var(--text-muted);
-            line-height: 1.8;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
+            line-height: 1.7;
         }
 
         .divider {
             height: 1px;
             background: var(--border);
             width: 100%;
-            margin: 1rem 0;
+            margin: 0.5rem 0;
         }
 
-        .actions {
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* Action Buttons */
+        .actions-row {
             display: flex;
             gap: 1rem;
             margin-top: 1rem;
+            flex-wrap: wrap; /* Allows wrapping on very tiny screens */
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 1.25rem 2rem;
+            padding: 1.1rem 1.5rem;
             border-radius: 12px;
             font-weight: 600;
-            font-size: 1.125rem;
+            font-size: 1.05rem;
             text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
             font-family: 'Outfit', sans-serif;
             cursor: pointer;
             border: none;
             flex: 1;
+            white-space: nowrap;
+        }
+
+        .btn-add-cart {
+            background: #F8F3D9;
+            color: var(--secondary);
+            border: 2px solid var(--border);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-add-cart:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
         }
 
         .btn-primary {
             background: var(--primary);
             color: white;
-            box-shadow: 0 10px 25px rgba(129, 154, 145, 0.3);
+            box-shadow: 0 10px 20px rgba(129, 154, 145, 0.25);
         }
 
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(129, 154, 145, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(129, 154, 145, 0.35);
             background: #668077;
         }
 
-        .btn-secondary {
+        .btn-wishlist {
             background: #F8F3D9;
-            color: var(--secondary);
+            color: var(--text-muted);
             border: 1px solid var(--border);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             flex: 0 0 auto;
-            width: 60px;
+            width: 58px;
             padding: 0;
         }
 
-        .btn-secondary:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            transform: translateY(-3px);
+        .btn-wishlist:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+            transform: translateY(-2px);
         }
 
+        .btn-wishlist.active {
+            color: var(--danger);
+            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        /* ==========================================================================
+           4. REVIEWS SECTION
+           ========================================================================== */
+        .section-reviews {
+            padding: 4rem 2rem;
+            max-width: 1280px;
+            margin: 0 auto;
+            border-top: 1px solid var(--border);
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            color: var(--secondary);
+            margin-bottom: 2rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .review-card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .reviewer-name {
+            font-weight: 600;
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+        }
+
+        .review-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .stars-container {
+            display: flex;
+            gap: 2px;
+        }
+
+        .review-text {
+            color: var(--text-muted);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .empty-reviews {
+            text-align: center;
+            padding: 3rem;
+            background: var(--surface);
+            border-radius: 16px;
+            border: 1px dashed var(--border);
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        /* ==========================================================================
+           5. SIMILAR PRODUCTS (COMPACT GRID)
+           ========================================================================== */
+        .section-similar {
+            padding: 2rem 2rem 5rem;
+            max-width: 1280px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .compact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .compact-card {
+            background: #F8F3D9;
+            border-radius: 10px;
+            padding: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .compact-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            border-color: rgba(129, 154, 145, 0.4);
+        }
+
+        .compact-img-wrapper {
+            height: 190px;
+            width: 100%;
+            border-radius: 6px;
+            background-color: #F3F4F6;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .compact-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .compact-info {
+            padding: 0.8rem 0.25rem 0.25rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .compact-category {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+        }
+
+        .compact-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 0.4rem;
+            font-family: 'Outfit', sans-serif;
+            text-decoration: none;
+            line-height: 1.25;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .compact-price {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: auto;
+        }
+
+        .compact-btn-quick {
+            position: absolute;
+            bottom: 0.5rem;
+            right: 0.5rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(248, 243, 217, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(5px);
+            transition: all 0.2s;
+        }
+
+        .compact-card:hover .compact-btn-quick {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .compact-btn-quick:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* ==========================================================================
+           6. RESPONSIVE MEDIA QUERIES
+           ========================================================================== */
         @media (max-width: 968px) {
             .product-container {
                 grid-template-columns: 1fr;
                 gap: 2rem;
             }
+            .product-gallery {
+                aspect-ratio: 1 / 1;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .product-container {
+                padding: 2rem 1.25rem;
+            }
 
             .product-gallery {
-                height: 400px;
                 padding: 1rem;
+                border-radius: 16px;
             }
 
             .product-title {
-                font-size: 2.5rem;
+                font-size: 2rem;
+            }
+
+            .product-price {
+                font-size: 1.8rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr; /* Stack features */
+                gap: 0.75rem;
+            }
+
+            .actions-row {
+                flex-direction: column; /* Stack Add to Cart / Buy Now */
+            }
+
+            .actions-row form:first-child {
+                display: flex;
+                gap: 0.75rem;
+                width: 100%;
+            }
+
+            .btn-wishlist {
+                width: 100%;
+                padding: 1rem;
+            }
+
+            .section-reviews, .section-similar {
+                padding: 3rem 1.25rem;
+            }
+
+            .compact-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+
+            .compact-img-wrapper {
+                height: 150px;
+            }
+
+            .compact-btn-quick {
+                opacity: 1; /* Always show quick add on mobile */
+                transform: translateY(0);
             }
         }
     </style>
@@ -213,12 +508,13 @@
 
     <div class="content-wrapper">
         <div class="product-container">
+            
             <!-- Left Side: Image Gallery -->
             <div class="product-gallery">
                 {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
                 {% else %}
-                <div class="placeholder">{{ product.name|slice:":4" }}</div>
+                    <div class="placeholder-image">{{ product.name|slice:":4" }}</div>
                 {% endif %}
             </div>
 
@@ -232,72 +528,54 @@
 
                 <p class="product-description">
                     {% if product.description %}
-                    {{ product.description }}
+                        {{ product.description }}
                     {% else %}
-                    No description available for this premium product. Elevate your everyday style with this exclusive
-                    item from our curated collection.
+                        No description available for this premium product. Elevate your everyday style with this exclusive item from our curated collection.
                     {% endif %}
                 </p>
 
-                <div class="features" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0;">
-                    <div style="display: flex; align-items: center; gap: 10px; color: var(--text-main);">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            style="color: var(--primary);">
-                            <path
-                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-                            </path>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
                             <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                             <line x1="12" y1="22.08" x2="12" y2="12"></line>
                         </svg>
-                        <span style="font-size: 0.95rem; font-weight: 500;">Premium Packaging</span>
+                        <span>Premium Packaging</span>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 10px; color: var(--text-main);">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            style="color: var(--primary);">
+                    <div class="feature-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
                             <circle cx="12" cy="12" r="10"></circle>
                             <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
-                        <span style="font-size: 0.95rem; font-weight: 500;">Fast Shipping</span>
+                        <span>Fast Shipping</span>
                     </div>
                 </div>
 
                 <div class="divider"></div>
 
-                <div class="actions">
+                <div class="actions-row">
                     <form action="{% url 'cart_add' product.id %}" method="post" style="flex: 1; display:flex; gap: 1rem;">
                         {% csrf_token %}
-                        <button type="submit" class="btn" style="flex: 1; background: #F8F3D9; color: var(--secondary); border: 2px solid var(--border); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
-                            Add to Cart
-                        </button>
-                        <button type="submit" class="btn btn-primary" style="flex: 1;">
-                            Buy Now
-                        </button>
+                        <button type="submit" class="btn btn-add-cart">Add to Cart</button>
+                        <button type="submit" class="btn btn-primary">Buy Now</button>
                     </form>
+                    
                     {% if product.id in wishlist_product_ids %}
                     <form action="{% url 'wishlist_remove' product.id %}" method="post" style="display:flex;">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-secondary" title="Remove from Wishlist"
-                            style="cursor:pointer; color: #ef4444; border-color: #ef4444;">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#ef4444" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path
-                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                                </path>
+                        <button type="submit" class="btn btn-wishlist active" title="Remove from Wishlist">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                             </svg>
                         </button>
                     </form>
                     {% else %}
                     <form action="{% url 'wishlist_add' product.id %}" method="post" style="display:flex;">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-secondary" title="Save to Wishlist"
-                            style="cursor:pointer;">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path
-                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                                </path>
+                        <button type="submit" class="btn btn-wishlist" title="Save to Wishlist">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                             </svg>
                         </button>
                     </form>
@@ -306,19 +584,20 @@
             </div>
         </div>
 
-        <section class="section-reviews" style="padding: 4rem 2rem; max-width: 1400px; margin: 0 auto; border-top: 1px solid var(--border);">
-            <h2 style="font-size: 2rem; color: var(--secondary); margin-bottom: 2rem; font-family: 'Outfit'; font-weight: 700;">Customer Reviews</h2>
+        <!-- Customer Reviews Section -->
+        <section class="section-reviews">
+            <h2 class="section-title">Customer Reviews</h2>
             
             {% if product.reviews.all %}
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+            <div class="reviews-grid">
                 {% for review in product.reviews.all %}
-                <div style="background: var(--surface); border-radius: 16px; padding: 1.5rem; border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                <div class="review-card">
+                    <div class="review-header">
                         <div>
-                            <div style="font-weight: 600; color: var(--text-main); font-family: 'Outfit', sans-serif;">{{ review.user.first_name }} {{ review.user.last_name }}</div>
-                            <div style="font-size: 0.85rem; color: var(--text-muted);">{{ review.created_at|date:"M d, Y" }}</div>
+                            <div class="reviewer-name">{{ review.user.first_name }} {{ review.user.last_name }}</div>
+                            <div class="review-date">{{ review.created_at|date:"M d, Y" }}</div>
                         </div>
-                        <div style="display: flex; gap: 2px;">
+                        <div class="stars-container">
                             {% for i in "12345" %}
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="{% if forloop.counter <= review.rating %}#F59E0B{% else %}#E5E7EB{% endif %}" stroke="{% if forloop.counter <= review.rating %}#F59E0B{% else %}#E5E7EB{% endif %}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
@@ -326,52 +605,55 @@
                             {% endfor %}
                         </div>
                     </div>
-                    <p style="color: var(--text-main); line-height: 1.6; font-size: 0.95rem;">
-                        {{ review.comment }}
-                    </p>
+                    <p class="review-text">{{ review.comment }}</p>
                 </div>
                 {% endfor %}
             </div>
             {% else %}
-            <div style="text-align: center; padding: 3rem; background: var(--surface); border-radius: 16px; border: 1px dashed var(--border);">
-                <p style="color: var(--text-muted); font-size: 1.1rem;">No reviews yet. Purchase this product to be the first to review it!</p>
+            <div class="empty-reviews">
+                <p>No reviews yet. Purchase this product to be the first to review it!</p>
             </div>
             {% endif %}
         </section>
 
+        <!-- Similar Products Section -->
         {% if similar_products %}
-        <section class="section-products" style="padding: 4rem 2rem; max-width: 1400px; margin: 0 auto;">
-            <h2 style="font-size: 2rem; color: var(--secondary); margin-bottom: 2rem; font-family: 'Outfit'; font-weight: 700;">Similar Products</h2>
-            <div class="product-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
+        <section class="section-similar">
+            <h2 class="section-title">Similar Products</h2>
+            <div class="compact-grid">
                 {% for p in similar_products %}
-                <div class="product-card" style="background: #F8F3D9; border-radius: 20px; padding: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid var(--border); transition: all 0.4s ease; position: relative;">
-                    <div class="product-img" style="height: 250px; width: 100%; border-radius: 12px; background-color: #F3F4F6; overflow: hidden; position: relative;">
+                <div class="compact-card">
+                    <div class="compact-img-wrapper">
                         {% if p.image %}
-                        <img src="{{ p.image.url }}" alt="{{ p.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            <img src="{{ p.image.url }}" alt="{{ p.name }}">
                         {% else %}
-                        <div style="width:100%; height:100%; background:linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%); display:flex; align-items:center; justify-content:center; font-family:'Outfit'; font-size:2rem; color:white; font-weight:bold;">{{ p.name|slice:":4" }}</div>
+                            <div class="placeholder-image" style="font-size: 2rem;">{{ p.name|slice:":4" }}</div>
                         {% endif %}
+                        
                         <form action="{% url 'cart_add' p.id %}" method="post" style="margin:0;">
                             {% csrf_token %}
-                            <button type="submit" style="position: absolute; bottom: 1rem; right: 1rem; width: 40px; height: 40px; border-radius: 50%; background: #F8F3D9; display: flex; align-items: center; justify-content: center; color: var(--text-main); box-shadow: 0 4px 10px rgba(0,0,0,0.1); border:none; cursor:pointer;" title="Add to Cart">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            <button type="submit" class="compact-btn-quick" title="Add to Cart">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
                             </button>
                         </form>
                     </div>
-                    <div class="product-info" style="padding: 1rem 0.5rem 0.5rem;">
-                        <div class="product-category" style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; font-weight: 500;">{{ p.category.name }}</div>
-                        <a href="{% url 'product_detail' p.id %}" class="product-name" style="font-size: 1.15rem; font-weight: 600; color: var(--secondary); margin-bottom: 0.5rem; font-family: 'Outfit', sans-serif; text-decoration: none; display: block;">{{ p.name }}</a>
-                        <div class="product-price" style="font-size: 1.1rem; font-weight: 700; color: var(--primary);">₹{{ p.price }}</div>
+                    <div class="compact-info">
+                        <div class="compact-category">{{ p.category.name }}</div>
+                        <a href="{% url 'product_detail' p.id %}" class="compact-name">{{ p.name }}</a>
+                        <div class="compact-price">₹{{ p.price }}</div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
         </section>
         {% endif %}
+
     </div>
 
     <!-- Include the Footer -->
     {% include 'footer.html' %}
 </body>
-
 </html>

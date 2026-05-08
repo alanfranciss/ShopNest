@@ -88,9 +88,74 @@ def signup_view(request):
 def admin_dash_view(request):
     if not request.user.is_superuser:
         return redirect('index')
-    from .models import UserProfile
+    from .models import UserProfile, Order, Product
+    from django.utils import timezone
+    from datetime import timedelta
+    from django.db.models import Sum, Q
+    
+    q = request.GET.get('q', '')
+    
     pending_sellers = UserProfile.objects.filter(is_seller_pending=True).select_related('user')
-    return render(request, 'admindash.html', {'pending_sellers': pending_sellers})
+    customers = UserProfile.objects.filter(user__is_superuser=False).select_related('user').order_by('-user__date_joined')
+    recent_orders = Order.objects.all().order_by('-created_at')
+    search_products = None
+    
+    if q:
+        customers = customers.filter(
+            Q(user__first_name__icontains=q) | 
+            Q(user__last_name__icontains=q) | 
+            Q(user__email__icontains=q)
+        )
+        recent_orders = recent_orders.filter(
+            Q(first_name__icontains=q) | 
+            Q(last_name__icontains=q) | 
+            Q(id__icontains=q) |
+            Q(items__product__name__icontains=q)
+        ).distinct()
+        search_products = Product.objects.filter(
+            Q(name__icontains=q) | 
+            Q(description__icontains=q)
+        )
+    else:
+        recent_orders = recent_orders[:10]
+        
+    # Calculate Weekly Revenue (last 7 days)
+    today = timezone.now().date()
+    weekly_revenue = []
+    max_revenue = 0
+    
+    for i in range(6, -1, -1):
+        day = today - timedelta(days=i)
+        day_orders = Order.objects.filter(created_at__date=day).exclude(status='Cancelled')
+        revenue = day_orders.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+        
+        if revenue > max_revenue:
+            max_revenue = revenue
+            
+        weekly_revenue.append({
+            'day_name': day.strftime('%a'),
+            'revenue': float(revenue),
+        })
+        
+    for data in weekly_revenue:
+        if max_revenue > 0:
+            data['height'] = max(5, int((data['revenue'] / float(max_revenue)) * 100)) if data['revenue'] > 0 else 0
+        else:
+            data['height'] = 0
+            
+        if data['revenue'] >= 1000:
+            data['formatted_val'] = f"₹{data['revenue']/1000:.1f}K"
+        else:
+            data['formatted_val'] = f"₹{data['revenue']:.0f}"
+            
+    return render(request, 'admindash.html', {
+        'pending_sellers': pending_sellers, 
+        'customers': customers,
+        'recent_orders': recent_orders,
+        'weekly_revenue': weekly_revenue,
+        'search_products': search_products,
+        'q': q
+    })
 
 @login_required(login_url='login')
 def approve_seller(request, user_id):

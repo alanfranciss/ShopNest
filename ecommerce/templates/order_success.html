@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Success | ShopNest</title>
     <style>
+        /* ==========================================================================
+           1. IMPORTS & VARIABLES
+           ========================================================================== */
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
 
         :root {
@@ -18,6 +22,9 @@
             --border: #D1D8BE;
         }
 
+        /* ==========================================================================
+           2. RESET & BASE STYLES
+           ========================================================================== */
         * {
             margin: 0;
             padding: 0;
@@ -31,26 +38,32 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
         }
 
         .content-wrapper {
-            padding-top: 100px;
+            padding-top: 85px; /* Matches your fixed navbar clearance */
             flex-grow: 1;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding-left: 1rem;
+            padding-right: 1rem;
         }
 
+        /* ==========================================================================
+           3. SUCCESS CARD LAYOUT
+           ========================================================================== */
         .success-card {
             background: white;
             padding: 4rem 3rem;
             border-radius: 24px;
             text-align: center;
             max-width: 600px;
-            width: 90%;
+            width: 100%;
             box-shadow: 0 20px 40px rgba(0,0,0,0.05);
             border: 1px solid var(--border);
-            margin-bottom: 5rem;
+            margin: 2rem 0 5rem;
         }
 
         .success-icon {
@@ -67,7 +80,7 @@
 
         .success-title {
             font-family: 'Outfit', sans-serif;
-            font-size: 2.5rem;
+            font-size: clamp(2rem, 6vw, 2.5rem); /* Fluid scaling for smaller screens */
             font-weight: 800;
             color: var(--secondary);
             margin-bottom: 1rem;
@@ -76,24 +89,29 @@
 
         .success-text {
             color: var(--text-muted);
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             line-height: 1.6;
             margin-bottom: 2rem;
         }
 
+        /* ==========================================================================
+           4. ORDER DETAILS BOX
+           ========================================================================== */
         .order-details {
             background: var(--bg-body);
             border-radius: 12px;
             padding: 1.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             text-align: left;
         }
 
         .detail-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.5rem;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
             font-size: 0.95rem;
+            gap: 1rem;
         }
         
         .detail-row:last-child {
@@ -104,8 +122,24 @@
             font-weight: 600;
             font-size: 1.1rem;
             color: var(--secondary);
+            align-items: center;
         }
 
+        .detail-label {
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: var(--text-main);
+            text-align: right;
+            word-break: break-word;
+        }
+
+        /* ==========================================================================
+           5. BUTTON
+           ========================================================================== */
         .btn {
             display: inline-block;
             background: var(--primary);
@@ -116,12 +150,77 @@
             text-decoration: none;
             font-family: 'Outfit', sans-serif;
             transition: all 0.3s;
+            font-size: 1.05rem;
         }
 
         .btn:hover {
             background: #668077;
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(129, 154, 145, 0.2);
+        }
+
+        /* ==========================================================================
+           6. RESPONSIVE MEDIA QUERIES
+           ========================================================================== */
+        @media (max-width: 640px) {
+            .content-wrapper {
+                padding-top: 100px; /* Slight extra push on mobile to center better */
+                align-items: flex-start; /* Prevents top cutoff on very short screens */
+            }
+
+            .success-card {
+                padding: 2.5rem 1.5rem;
+                border-radius: 20px;
+                margin-bottom: 3rem;
+            }
+
+            .success-icon {
+                width: 64px;
+                height: 64px;
+                margin-bottom: 1.5rem;
+            }
+
+            .success-icon svg {
+                width: 32px;
+                height: 32px;
+            }
+
+            .success-text {
+                font-size: 0.95rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .order-details {
+                padding: 1.25rem;
+                margin-bottom: 2rem;
+            }
+
+            /* Make button full width for easy thumb tapping */
+            .btn {
+                width: 100%;
+                text-align: center;
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* On very small phones, stack the detail rows to avoid squished text */
+            .detail-row {
+                flex-direction: column;
+                gap: 0.25rem;
+                margin-bottom: 1rem;
+            }
+
+            .detail-value {
+                text-align: left;
+            }
+
+            /* Keep the final Total row side-by-side */
+            .detail-row:last-child {
+                flex-direction: row;
+                justify-content: space-between;
+                margin-bottom: 0;
+            }
         }
     </style>
 </head>
@@ -136,24 +235,24 @@
                 </svg>
             </div>
             <h1 class="success-title">Order Confirmed!</h1>
-            <p class="success-text">Thank you, {{ order.first_name }}! Your premium aesthetics are on their way. We've sent a confirmation email to {{ order.email }}.</p>
+            <p class="success-text">Thank you, {{ order.first_name }}! Your premium aesthetics are on their way. We've sent a confirmation email to <strong>{{ order.email }}</strong>.</p>
             
             <div class="order-details">
                 <div class="detail-row">
-                    <span style="color:var(--text-muted)">Order Number</span>
-                    <span style="font-weight:500; color:var(--text-main)">#{{ order.id }}9928</span>
+                    <span class="detail-label">Order Number</span>
+                    <span class="detail-value">#{{ order.id }}9928</span>
                 </div>
                 <div class="detail-row">
-                    <span style="color:var(--text-muted)">Payment Method</span>
-                    <span style="font-weight:500; color:var(--text-main)">{{ order.payment_method }}</span>
+                    <span class="detail-label">Payment Method</span>
+                    <span class="detail-value">{{ order.payment_method }}</span>
                 </div>
                 <div class="detail-row">
-                    <span style="color:var(--text-muted)">Shipping Address</span>
-                    <span style="font-weight:500; color:var(--text-main)">{{ order.city }}, {{ order.zip_code }}</span>
+                    <span class="detail-label">Shipping Address</span>
+                    <span class="detail-value">{{ order.city }}, {{ order.zip_code }}</span>
                 </div>
                 <div class="detail-row">
-                    <span>Total Amount Paid</span>
-                    <span>₹{{ order.total_amount }}</span>
+                    <span class="detail-label" style="color: inherit;">Total Amount Paid</span>
+                    <span class="detail-value">₹{{ order.total_amount }}</span>
                 </div>
             </div>
 

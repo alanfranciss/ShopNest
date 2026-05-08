@@ -537,14 +537,14 @@
     <!-- Main Content -->
     <main class="main-content">
         <header class="topbar">
-            <div class="search-bar">
+            <form class="search-bar" method="GET" action="{% url 'admin_dash' %}">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);">
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <input type="text" placeholder="Search orders, products, or users...">
-            </div>
+                <input type="text" name="q" value="{{ q }}" placeholder="Search orders, products, or users...">
+            </form>
 
             <div class="topbar-actions">
                 <button class="btn-icon">
@@ -639,6 +639,52 @@
 
             <!-- Main Grid -->
             
+            {% if q %}
+            <div style="margin-bottom: 2rem;">
+                <h2 style="font-family: 'Outfit'; font-size: 1.5rem; margin-bottom: 1rem;">Search Results for "{{ q }}"</h2>
+            </div>
+            
+            <!-- Found Products Section -->
+            {% if search_products %}
+            <div class="card" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h2>Found Products</h2>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in search_products %}
+                            <tr>
+                                <td>
+                                    <div class="product-cell">
+                                        {% if product.image %}
+                                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                                        {% else %}
+                                        <div style="width:40px;height:40px;background:#E2E8F0;border-radius:8px;"></div>
+                                        {% endif %}
+                                        <span>{{ product.name }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ product.category.name }}</td>
+                                <td>₹{{ product.price }}</td>
+                                <td>{{ product.quantity }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+            {% endif %}
+            
             <!-- Pending Sellers Section -->
             {% if pending_sellers %}
             <div class="card" style="margin-bottom: 2rem;">
@@ -696,46 +742,40 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for order in recent_orders %}
                                 <tr>
-                                    <td>#ORD-001</td>
+                                    <td>#ORD-{{ order.id }}</td>
                                     <td>
-                                        <div class="product-cell"><span>Midnight Aviators</span></div>
+                                        <div class="product-cell">
+                                            <span>
+                                                {% for item in order.items.all %}
+                                                    {{ item.product.name }}{% if not forloop.last %}, {% endif %}
+                                                {% empty %}
+                                                    No items
+                                                {% endfor %}
+                                            </span>
+                                        </div>
                                     </td>
-                                    <td>John Doe</td>
-                                    <td>Oct 24, 2026</td>
-                                    <td>₹129.00</td>
-                                    <td><span class="status completed">Completed</span></td>
+                                    <td>{{ order.first_name }} {{ order.last_name }}</td>
+                                    <td>{{ order.created_at|date:"M d, Y" }}</td>
+                                    <td>₹{{ order.total_amount }}</td>
+                                    <td>
+                                        {% if order.status == 'Delivered' or order.status == 'Completed' %}
+                                        <span class="status completed">{{ order.status }}</span>
+                                        {% elif order.status == 'Cancelled' %}
+                                        <span class="status canceled">{{ order.status }}</span>
+                                        {% elif order.status == 'Shipped' %}
+                                        <span class="status completed" style="background:#E0E7FF; color:#4338CA;">Shipped</span>
+                                        {% else %}
+                                        <span class="status pending">{{ order.status }}</span>
+                                        {% endif %}
+                                    </td>
                                 </tr>
+                                {% empty %}
                                 <tr>
-                                    <td>#ORD-002</td>
-                                    <td>
-                                        <div class="product-cell"><span>Cloudrunner x Series</span></div>
-                                    </td>
-                                    <td>Sarah Smith</td>
-                                    <td>Oct 24, 2026</td>
-                                    <td>₹245.00</td>
-                                    <td><span class="status pending">Processing</span></td>
+                                    <td colspan="6" style="text-align:center; padding: 2rem;">No recent orders found.</td>
                                 </tr>
-                                <tr>
-                                    <td>#ORD-003</td>
-                                    <td>
-                                        <div class="product-cell"><span>AuraPods Pro</span></div>
-                                    </td>
-                                    <td>Mike Johnson</td>
-                                    <td>Oct 23, 2026</td>
-                                    <td>₹199.00</td>
-                                    <td><span class="status completed">Completed</span></td>
-                                </tr>
-                                <tr>
-                                    <td>#ORD-004</td>
-                                    <td>
-                                        <div class="product-cell"><span>Minimalist Trench</span></div>
-                                    </td>
-                                    <td>Emma Wilson</td>
-                                    <td>Oct 22, 2026</td>
-                                    <td>₹380.00</td>
-                                    <td><span class="status canceled">Canceled</span></td>
-                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -748,20 +788,57 @@
                         <button class="btn-ghost">Report</button>
                     </div>
                     <div class="chart-placeholder">
-                        <div class="bar" style="height: 40%;" data-val="₹2.4K"></div>
-                        <div class="bar" style="height: 60%;" data-val="₹3.2K"></div>
-                        <div class="bar" style="height: 35%;" data-val="₹1.8K"></div>
-                        <div class="bar" style="height: 80%;" data-val="₹4.5K"></div>
-                        <div class="bar" style="height: 55%;" data-val="₹2.9K"></div>
-                        <div class="bar" style="height: 90%;" data-val="₹5.1K"></div>
-                        <div class="bar" style="height: 70%;" data-val="₹3.8K"></div>
+                        {% for item in weekly_revenue %}
+                        <div class="bar" style="height: {{ item.height }}%;" data-val="{{ item.formatted_val }}"></div>
+                        {% endfor %}
                     </div>
                     <div
                         style="display: flex; justify-content: space-between; margin-top: 10px; color: var(--text-muted); font-size: 0.8rem; font-weight: 500;">
-                        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                        {% for item in weekly_revenue %}
+                        <span>{{ item.day_name }}</span>
+                        {% endfor %}
                     </div>
                 </div>
 
+            </div>
+
+            <!-- Customer List -->
+            <div class="card" style="margin-top: 2rem; margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h2>Customer List</h2>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Date Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for customer in customers %}
+                            <tr>
+                                <td>{{ customer.user.first_name }} {{ customer.user.last_name }}</td>
+                                <td>{{ customer.user.email }}</td>
+                                <td>
+                                    {% if customer.is_seller %}
+                                    <span class="status completed" style="background:#E0E7FF; color:#4338CA;">Seller</span>
+                                    {% else %}
+                                    <span class="status pending" style="background:#F1F5F9; color:#64748B;">Customer</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ customer.user.date_joined|date:"M d, Y" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" style="text-align:center; padding:2rem;">No customers found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>

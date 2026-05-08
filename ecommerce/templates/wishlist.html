@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Wishlist | ShopNest</title>
     <style>
+        /* ==========================================================================
+           1. IMPORTS & VARIABLES
+           ========================================================================== */
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
 
         :root {
@@ -17,8 +20,12 @@
             --text-main: #111827;
             --text-muted: #6B7280;
             --border: #D1D8BE;
+            --danger: #EF4444;
         }
 
+        /* ==========================================================================
+           2. RESET & BASE STYLES
+           ========================================================================== */
         * {
             margin: 0;
             padding: 0;
@@ -33,63 +40,91 @@
             flex-direction: column;
             min-height: 100vh;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        h1,
-        h2,
-        h3,
-        h4,
-        .font-heading {
+        h1, h2, h3, h4, .font-heading {
             font-family: 'Outfit', sans-serif;
         }
 
+        /* Clears the fixed navbar */
         .content-wrapper {
-            padding-top: 100px;
+            padding-top: 85px; 
             flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
 
+        /* ==========================================================================
+           3. HEADER & CONTAINER
+           ========================================================================== */
         .cart-container {
             max-width: 1400px;
             margin: 2rem auto 5rem;
             padding: 0 2rem;
+            width: 100%;
         }
 
         .cart-header {
-            margin-bottom: 3rem;
+            margin-bottom: 2.5rem;
         }
 
         .cart-title {
-            font-size: 2.5rem;
+            font-size: clamp(2rem, 5vw, 2.8rem); /* Fluid typography */
             color: var(--secondary);
             font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        
+        .cart-subtitle {
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            font-size: 1.05rem;
+        }
+
+        /* ==========================================================================
+           4. PRODUCT GRID & CARDS
+           ========================================================================== */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
         }
 
         .product-card {
             background: #F8F3D9;
-            border-radius: 20px;
-            padding: 1rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            border-radius: 16px;
+            padding: 0.75rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
             border: 1px solid var(--border);
-            transition: all 0.4s ease;
+            transition: all 0.3s ease;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
         .product-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.06);
             border-color: rgba(129, 154, 145, 0.3);
         }
 
-        .product-img {
-            height: 280px;
+        .product-img-wrapper {
             width: 100%;
+            aspect-ratio: 4 / 5; /* Fluid aspect ratio instead of fixed height */
             border-radius: 12px;
             background-color: #F3F4F6;
             overflow: hidden;
             position: relative;
         }
 
-        .product-img>div {
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-placeholder {
             width: 100%;
             height: 100%;
             background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
@@ -97,25 +132,26 @@
             align-items: center;
             justify-content: center;
             font-family: 'Outfit';
-            font-size: 2rem;
+            font-size: 1.5rem;
             color: white;
-            font-weight: bold;
+            font-weight: 700;
             opacity: 0.8;
             transition: transform 0.5s;
         }
 
-        .product-card:hover .product-img>div {
+        .product-card:hover .product-placeholder {
             transform: scale(1.05);
         }
 
+        /* Action Buttons on Card */
         .btn-add {
             position: absolute;
-            bottom: 1rem;
-            right: 1rem;
-            width: 45px;
-            height: 45px;
+            bottom: 0.75rem;
+            right: 0.75rem;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: #F8F3D9;
+            background: rgba(248, 243, 217, 0.95);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -123,8 +159,10 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             opacity: 0;
             transform: translateY(10px);
-            transition: all 0.3s ease;
-            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
         }
 
         .product-card:hover .btn-add {
@@ -137,33 +175,106 @@
             color: white;
         }
 
+        .btn-remove {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: white;
+            color: var(--danger);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        .product-card:hover .btn-remove {
+            opacity: 1;
+        }
+
+        .btn-remove:hover {
+            transform: scale(1.1);
+            background: #FEF2F2;
+        }
+
+        /* Product Details */
         .product-info {
-            padding: 1.5rem 0.5rem 0.5rem;
+            padding: 1rem 0.25rem 0.25rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
         }
 
         .product-category {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
         }
 
         .product-name {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 600;
             color: var(--secondary);
             margin-bottom: 0.5rem;
             font-family: 'Outfit', sans-serif;
             text-decoration: none;
-            display: block;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.3;
         }
 
         .product-price {
-            font-size: 1.15rem;
+            font-size: 1.05rem;
             font-weight: 700;
             color: var(--primary);
+            margin-top: auto; /* Pushes price to bottom */
+        }
+
+        /* ==========================================================================
+           5. EMPTY STATE & BUTTONS
+           ========================================================================== */
+        .empty-cart {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 1px dashed var(--border);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .empty-icon {
+            width: 64px;
+            height: 64px;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .empty-title {
+            font-family: 'Outfit', sans-serif;
+            color: var(--secondary);
+            font-size: clamp(1.8rem, 4vw, 2.2rem);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .empty-text {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 1.05rem;
         }
 
         .btn-checkout {
@@ -172,13 +283,12 @@
             background: var(--primary);
             color: white;
             padding: 1rem 2rem;
-            border-radius: 12px;
+            border-radius: 10px;
             font-weight: 600;
             text-decoration: none;
-            margin-top: 2rem;
             transition: all 0.3s;
-            font-family: 'Outfit';
-            font-size: 1.1rem;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
             border: none;
             cursor: pointer;
         }
@@ -189,15 +299,96 @@
             box-shadow: 0 10px 20px rgba(129, 154, 145, 0.2);
         }
 
-        .empty-cart {
-            text-align: center;
-            padding: 5rem 2rem;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-            border: 1px dashed var(--border);
-            max-width: 800px;
-            margin: 0 auto;
+        /* ==========================================================================
+           6. RESPONSIVE MEDIA QUERIES
+           ========================================================================== */
+        @media (max-width: 640px) {
+            .cart-container {
+                padding: 0 1.25rem;
+                margin-top: 1.5rem;
+            }
+
+            .cart-header {
+                margin-bottom: 1.5rem;
+            }
+
+            .cart-subtitle {
+                font-size: 0.95rem;
+            }
+
+            .product-grid {
+                /* Forces exactly 2 columns on mobile for App-like view */
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+
+            .product-card {
+                padding: 0.5rem;
+                border-radius: 12px;
+            }
+
+            .product-img-wrapper {
+                aspect-ratio: 1 / 1; /* Square images on mobile to save vertical space */
+            }
+
+            .product-info {
+                padding: 0.75rem 0.25rem 0.25rem;
+            }
+
+            .product-name {
+                font-size: 0.9rem;
+            }
+
+            .product-price {
+                font-size: 0.95rem;
+            }
+
+            /* Make quick actions always visible on mobile since there is no hover */
+            .btn-add, .btn-remove {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .btn-add {
+                width: 32px;
+                height: 32px;
+                bottom: 0.5rem;
+                right: 0.5rem;
+            }
+
+            .btn-add svg {
+                width: 16px;
+                height: 16px;
+            }
+
+            .btn-remove {
+                width: 28px;
+                height: 28px;
+                top: 0.4rem;
+                right: 0.4rem;
+            }
+
+            .btn-remove svg {
+                width: 14px;
+                height: 14px;
+            }
+
+            .empty-cart {
+                padding: 3rem 1.5rem;
+            }
+
+            .btn-checkout {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .product-grid {
+                grid-template-columns: 1fr; /* Drop to 1 column on extremely small phones */
+            }
+            .product-img-wrapper {
+                aspect-ratio: 4 / 5;
+            }
         }
     </style>
 </head>
@@ -209,65 +400,57 @@
         <div class="cart-container">
             <div class="cart-header">
                 <h1 class="cart-title">Your Wishlist</h1>
-                <p style="color:var(--text-muted); margin-top:0.5rem;">Save your favorite items here and move them to
-                    your cart when you're ready.</p>
+                <p class="cart-subtitle">Save your favorite items here and move them to your cart when you're ready.</p>
             </div>
 
             {% if wishlist|length > 0 %}
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2.5rem;">
+            <div class="product-grid">
                 {% for item in wishlist %}
                 <div class="product-card">
-                    <div class="product-img">
+                    
+                    <div class="product-img-wrapper">
                         {% if item.product.image %}
-                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
-                            style="width: 100%; height: 100%; object-fit: cover;">
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="product-img">
                         {% else %}
-                        <div>{{ item.product.name|slice:":4" }}</div>
+                            <div class="product-placeholder">{{ item.product.name|slice:":4" }}</div>
                         {% endif %}
 
+                        <!-- Remove from Wishlist Button -->
+                        <a href="{% url 'wishlist_remove' item.product.id %}" class="btn-remove" title="Remove from Wishlist">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </a>
+
+                        <!-- Quick Add to Cart Button -->
                         <form action="{% url 'cart_add' item.product.id %}" method="post" style="margin:0;">
                             {% csrf_token %}
-                            <button type="submit" class="btn-add" style="border:none; cursor:pointer;"
-                                title="Add to Cart">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <button type="submit" class="btn-add" title="Add to Cart">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <line x1="12" y1="5" x2="12" y2="19"></line>
                                     <line x1="5" y1="12" x2="19" y2="12"></line>
                                 </svg>
                             </button>
                         </form>
-
-                        <a href="{% url 'wishlist_remove' item.product.id %}"
-                            style="position:absolute; top:1rem; right:1rem; background:white; color:#EF4444; border-radius:50%; width:35px; height:35px; display:flex; align-items:center; justify-content:center; text-decoration:none; box-shadow:0 2px 10px rgba(0,0,0,0.1);"
-                            title="Remove">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
-                        </a>
                     </div>
+
                     <div class="product-info">
                         <div class="product-category">{{ item.product.category.name }}</div>
                         <a href="{% url 'product_detail' item.product.id %}" class="product-name">{{ item.product.name }}</a>
                         <div class="product-price">₹{{ item.price }}</div>
                     </div>
+                    
                 </div>
                 {% endfor %}
             </div>
             {% else %}
             <div class="empty-cart">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)"
-                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-                    style="margin-bottom: 1.5rem; display:inline-block;">
-                    <path
-                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                    </path>
+                <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                 </svg>
-                <h2 style="font-family:'Outfit'; color:var(--secondary); font-size: 2rem; margin-bottom: 1rem;">Your
-                    wishlist is empty</h2>
-                <p style="color:var(--text-muted); margin-bottom: 2rem; font-size: 1.1rem;">You haven't saved any items
-                    to your wishlist yet.</p>
+                <h2 class="empty-title">Your wishlist is empty</h2>
+                <p class="empty-text">You haven't saved any items to your wishlist yet.</p>
                 <a href="{% url 'products' %}" class="btn-checkout">Discover Collection</a>
             </div>
             {% endif %}

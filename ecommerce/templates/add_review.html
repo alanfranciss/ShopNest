@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Review {{ product.name }} | ShopNest</title>
     <style>
+        /* ==========================================================================
+           1. IMPORTS & VARIABLES
+           ========================================================================== */
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
 
         :root {
@@ -18,6 +21,9 @@
             --border: #D1D8BE;
         }
 
+        /* ==========================================================================
+           2. RESET & BASE STYLES
+           ========================================================================== */
         * {
             margin: 0;
             padding: 0;
@@ -31,33 +37,229 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* ==========================================================================
+           3. LAYOUT & CARD STYLES
+           ========================================================================== */
+        .review-wrapper {
+            padding-top: 85px; /* Navbar clearance */
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-body);
+            padding-bottom: 2rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .review-card {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 3.5rem 3rem;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .review-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2C3E35;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .review-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-size: 1.05rem;
+        }
+
+        /* ==========================================================================
+           4. FORM ELEMENTS
+           ========================================================================== */
+        .review-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group.center {
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-main);
+        }
+
+        .star-container {
+            display: flex;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .star-icon {
+            width: 40px;
+            height: 40px;
+            transition: all 0.2s ease;
+        }
+
+        .form-textarea {
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+            background-color: white;
+            width: 100%;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(129, 154, 145, 0.15);
+        }
+
+        /* ==========================================================================
+           5. BUTTONS
+           ========================================================================== */
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: #E5E7EB;
+            color: var(--text-main);
+        }
+
+        .btn-cancel:hover {
+            background: #D1D5DB;
+        }
+
+        .btn-submit {
+            flex: 2;
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(129, 154, 145, 0.2);
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(129, 154, 145, 0.3);
+        }
+
+        /* ==========================================================================
+           6. RESPONSIVE MEDIA QUERIES
+           ========================================================================== */
+        @media (max-width: 640px) {
+            .review-wrapper {
+                align-items: flex-start; /* Push card to top on mobile */
+                padding-top: 100px;
+            }
+
+            .review-card {
+                padding: 2rem 1.5rem;
+                border-radius: 16px;
+            }
+
+            .review-title {
+                font-size: 1.8rem;
+            }
+
+            .review-subtitle {
+                font-size: 0.95rem;
+                margin-bottom: 2rem;
+            }
+
+            .star-icon {
+                width: 32px;
+                height: 32px;
+            }
+
+            .btn-group {
+                flex-direction: column; /* Stack buttons vertically */
+                gap: 0.75rem;
+            }
+
+            .btn-cancel {
+                order: 2; /* Put cancel button on bottom */
+            }
+
+            .btn-submit {
+                order: 1; /* Put submit button on top */
+            }
+
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
+
 <body>
     {% include 'navbar.html' %}
 
-    <div style="padding-top: 100px; min-height: calc(100vh - 80px); display: flex; align-items: center; justify-content: center; background-color: var(--bg-body); padding-bottom: 2rem;">
-        <div style="background: var(--surface); border-radius: 20px; padding: 3rem; width: 100%; max-width: 600px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); border: 1px solid var(--border);">
-            <h1 style="font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 700; color: #2C3E35; margin-bottom: 1rem; text-align: center;">
+    <div class="review-wrapper">
+        <div class="review-card">
+            <h1 class="review-title">
                 {% if review %}Edit Your Review{% else %}Write a Review{% endif %}
             </h1>
-            <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">
+            <p class="review-subtitle">
                 Share your thoughts on <strong>{{ product.name }}</strong>
             </p>
 
-            <form method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <form method="post" class="review-form">
                 {% csrf_token %}
                 
-                <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: center; margin-bottom: 1rem;">
-                    <label style="font-weight: 600; font-size: 1.1rem; color: var(--text-main);">Rating</label>
+                <!-- Rating Stars -->
+                <div class="form-group center">
+                    <label class="form-label">Rating</label>
                     <input type="hidden" name="rating" id="rating_input" value="{% if review %}{{ review.rating }}{% else %}0{% endif %}" required>
-                    <div id="star-container" style="display: flex; gap: 8px; cursor: pointer;">
+                    <div id="star-container" class="star-container">
                         {% for i in "12345" %}
-                        <svg class="star-icon" data-value="{{ forloop.counter }}" width="40" height="40" viewBox="0 0 24 24" 
+                        <svg class="star-icon" data-value="{{ forloop.counter }}" viewBox="0 0 24 24" 
                              fill="{% if review and forloop.counter <= review.rating %}#F59E0B{% else %}#E5E7EB{% endif %}" 
                              stroke="{% if review and forloop.counter <= review.rating %}#F59E0B{% else %}#E5E7EB{% endif %}" 
-                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: all 0.2s;">
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                         </svg>
                         {% endfor %}
@@ -75,7 +277,7 @@
                             if (val <= rating) {
                                 star.setAttribute('fill', isHover ? '#FCD34D' : '#F59E0B');
                                 star.setAttribute('stroke', isHover ? '#FCD34D' : '#F59E0B');
-                                star.style.transform = isHover ? 'scale(1.1)' : 'scale(1)';
+                                star.style.transform = isHover ? 'scale(1.15)' : 'scale(1)';
                             } else {
                                 star.setAttribute('fill', '#E5E7EB');
                                 star.setAttribute('stroke', '#E5E7EB');
@@ -109,14 +311,16 @@
                     });
                 </script>
 
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    <label for="comment" style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);">Your Review</label>
-                    <textarea name="comment" id="comment" rows="5" required placeholder="What did you like or dislike about this product?" style="padding: 1rem; border: 1px solid var(--border); border-radius: 8px; font-family: 'Inter', sans-serif; resize: vertical; background-color: white;">{% if review %}{{ review.comment }}{% endif %}</textarea>
+                <!-- Review Text Area -->
+                <div class="form-group">
+                    <label for="comment" class="form-label" style="font-size: 0.95rem;">Your Review</label>
+                    <textarea name="comment" id="comment" rows="5" class="form-textarea" required placeholder="What did you like or dislike about this product?">{% if review %}{{ review.comment }}{% endif %}</textarea>
                 </div>
 
-                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                    <button type="button" onclick="history.back()" style="flex: 1; padding: 1rem; border: none; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 600; background: #E5E7EB; color: var(--text-main); font-family: 'Outfit', sans-serif; transition: background 0.2s; cursor: pointer;" onmouseover="this.style.background='#D1D5DB';" onmouseout="this.style.background='#E5E7EB';">Cancel</button>
-                    <button type="submit" style="flex: 2; padding: 1rem; border: none; border-radius: 8px; font-weight: 600; background: var(--primary); color: white; font-family: 'Outfit', sans-serif; cursor: pointer; transition: background 0.2s; box-shadow: 0 4px 6px rgba(129, 154, 145, 0.2);" onmouseover="this.style.background='var(--primary-hover)';" onmouseout="this.style.background='var(--primary)';">
+                <!-- Action Buttons -->
+                <div class="btn-group">
+                    <button type="button" onclick="history.back()" class="btn btn-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-submit">
                         {% if review %}Update Review{% else %}Submit Review{% endif %}
                     </button>
                 </div>

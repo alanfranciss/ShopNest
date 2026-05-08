@@ -29,19 +29,19 @@
         max-width: 1400px;
         margin: 0 auto;
         padding: 1rem 2rem;
-        display: grid;
-        grid-template-columns: auto 1fr auto;
+        display: flex;
         align-items: center;
-        gap: 2rem;
+        justify-content: space-between;
+        gap: 1rem;
     }
 
     .nav-brand {
         display: flex;
         align-items: center;
-        justify-content: flex-start;
         gap: 0.75rem;
         text-decoration: none;
         color: var(--text-main);
+        z-index: 10001;
     }
 
     .brand-icon {
@@ -63,11 +63,19 @@
         letter-spacing: -0.02em;
     }
 
+    .nav-content {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        justify-content: space-between;
+    }
+
     .nav-links {
         display: flex;
         gap: 2.5rem;
         align-items: center;
         justify-content: center;
+        margin: 0 auto;
     }
 
     .nav-item {
@@ -103,7 +111,6 @@
     .nav-actions {
         display: flex;
         align-items: center;
-        justify-content: flex-end;
         gap: 1.25rem;
     }
 
@@ -115,6 +122,7 @@
         padding: 0.6rem 1.4rem;
         border-radius: 8px;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        white-space: nowrap;
     }
 
     .btn-login {
@@ -138,9 +146,88 @@
         box-shadow: 0 6px 16px rgba(129, 154, 145, 0.35);
     }
 
-    @media (max-width: 768px) {
+    .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--text-main);
+        cursor: pointer;
+        padding: 0.5rem;
+        z-index: 10001;
+    }
+
+    /* Mobile Responsive Styles */
+    @media (max-width: 1024px) {
+        .nav-container {
+            padding: 1rem;
+        }
+        
+        .mobile-menu-btn {
+            display: block;
+        }
+
+        .nav-content {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            transform: translateY(-100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            visibility: hidden;
+            z-index: 10000;
+        }
+
+        .nav-content.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
         .nav-links {
-            display: none;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin: 0;
+        }
+
+        .nav-item {
+            font-size: 1.5rem;
+        }
+
+        .nav-actions {
+            flex-direction: column;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .nav-actions form {
+            width: 100%;
+        }
+
+        .nav-actions form input {
+            width: 100% !important;
+        }
+
+        .btn-login,
+        .btn-signup {
+            width: 100%;
+            text-align: center;
+            padding: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .search-form-container {
+            width: 100%;
+            max-width: 300px;
         }
     }
 </style>
@@ -158,58 +245,109 @@
             <span class="brand-text">ShopNest</span>
         </a>
 
-        <div class="nav-links">
-            <a href="{% url 'index' %}" class="nav-item">Home</a>
-            <a href="{% url 'products' %}" class="nav-item">Collections</a>
-            <a href="{% url 'categories' %}" class="nav-item">Categories</a>
-            <a href="{% url 'about' %}" class="nav-item">About Us</a>
-        </div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="menuIcon">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="closeIcon" style="display: none;">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
 
-        <div class="nav-actions">
-            <!-- Search Form -->
-            <form action="{% url 'products' %}" method="get" style="display: flex; align-items: center; background: white; border-radius: 20px; padding: 0.35rem 0.75rem; border: 1px solid var(--nav-border);">
-                <input type="text" name="q" placeholder="Search..." value="{{ search_query|default:'' }}" style="border: none; outline: none; background: transparent; width: 240px; font-size: 0.9rem; font-family: 'Inter', sans-serif; color: var(--text-main);">
-                <button type="submit" style="background: none; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                </button>
-            </form>
-            <a href="{% url 'wishlist_detail' %}" class="btn-login" style="position:relative; display:flex; align-items:center; justify-content:center; padding:0.5rem;" title="Wishlist">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-                {% if wishlist|length > 0 %}
-                <span style="position:absolute; top: -2px; right: -2px; background: #EF4444; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold;">{{ wishlist|length }}</span>
-                {% endif %}
-            </a>
-            <a href="{% url 'cart_detail' %}" class="btn-login" style="position:relative; display:flex; align-items:center; justify-content:center; padding:0.5rem;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="9" cy="21" r="1"></circle>
-                    <circle cx="20" cy="21" r="1"></circle>
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                </svg>
-                {% if cart|length > 0 %}
-                <span style="position:absolute; top: -2px; right: -2px; background: var(--primary); color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold;">{{ cart|length }}</span>
-                {% endif %}
-            </a>
-            {% if request.user.is_authenticated %}
-                {% if request.user.is_superuser %}
-                    <a href="{% url 'admin_dash' %}" class="btn-login">Admin</a>
+        <div class="nav-content" id="navContent">
+            <div class="nav-links">
+                <a href="{% url 'index' %}" class="nav-item">Home</a>
+                <a href="{% url 'categories' %}" class="nav-item">Categories</a>
+                <a href="{% url 'products' %}" class="nav-item">Collections</a>
+            </div>
+
+            <div class="nav-actions">
+                <!-- Search Form -->
+                <div class="search-form-container">
+                    <form action="{% url 'products' %}" method="get" style="display: flex; align-items: center; background: white; border-radius: 20px; padding: 0.35rem 0.75rem; border: 1px solid var(--nav-border); width: 100%;">
+                        <input type="text" name="q" placeholder="Search..." value="{{ search_query|default:'' }}" style="border: none; outline: none; background: transparent; width: 240px; font-size: 0.9rem; font-family: 'Inter', sans-serif; color: var(--text-main);">
+                        <button type="submit" style="background: none; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <a href="{% url 'wishlist_detail' %}" class="btn-login" style="position:relative; display:flex; align-items:center; justify-content:center; padding:0.5rem;" title="Wishlist">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                        {% if wishlist|length > 0 %}
+                        <span style="position:absolute; top: -2px; right: -2px; background: #EF4444; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold;">{{ wishlist|length }}</span>
+                        {% endif %}
+                    </a>
+                    <a href="{% url 'cart_detail' %}" class="btn-login" style="position:relative; display:flex; align-items:center; justify-content:center; padding:0.5rem;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        {% if cart|length > 0 %}
+                        <span style="position:absolute; top: -2px; right: -2px; background: var(--primary); color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold;">{{ cart|length }}</span>
+                        {% endif %}
+                    </a>
+                </div>
+
+                {% if request.user.is_authenticated %}
+                    {% if request.user.is_superuser %}
+                        <a href="{% url 'admin_dash' %}" class="btn-login">Admin</a>
+                    {% else %}
+                        <a href="{% url 'user' %}" class="btn-login">Profile</a>
+                    {% endif %}
+                    {% if request.user.profile.is_seller %}
+                        <a href="{% url 'seller_dashboard' %}" class="btn-login">Seller Hub</a>
+                    {% else %}
+                        <a href="{% url 'seller_registration' %}" class="btn-login">Become a Seller</a>
+                    {% endif %}
+                    <a href="{% url 'logout' %}" class="btn-signup" style="background:var(--secondary);">Log Out</a>
                 {% else %}
-                    <a href="{% url 'user' %}" class="btn-login">Profile</a>
+                    <a href="{% url 'login' %}" class="btn-login">Log In</a>
+                    <a href="{% url 'signup' %}" class="btn-signup">Sign Up</a>
                 {% endif %}
-                {% if request.user.profile.is_seller %}
-                    <a href="{% url 'seller_dashboard' %}" class="btn-login">Seller Hub</a>
-                {% else %}
-                    <a href="{% url 'seller_registration' %}" class="btn-login">Become a Seller</a>
-                {% endif %}
-                <a href="{% url 'logout' %}" class="btn-signup" style="background:var(--secondary);">Log Out</a>
-            {% else %}
-                <a href="{% url 'login' %}" class="btn-login">Log In</a>
-                <a href="{% url 'signup' %}" class="btn-signup">Sign Up</a>
-            {% endif %}
+            </div>
         </div>
     </div>
 </nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navContent = document.getElementById('navContent');
+        const menuIcon = document.getElementById('menuIcon');
+        const closeIcon = document.getElementById('closeIcon');
+
+        mobileMenuBtn.addEventListener('click', function() {
+            navContent.classList.toggle('active');
+            if (navContent.classList.contains('active')) {
+                menuIcon.style.display = 'none';
+                closeIcon.style.display = 'block';
+                document.body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
+            } else {
+                menuIcon.style.display = 'block';
+                closeIcon.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Close menu when clicking outside or on a link
+        navContent.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' || e.target.closest('a')) {
+                navContent.classList.remove('active');
+                menuIcon.style.display = 'block';
+                closeIcon.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        });
+    });
+</script>
